@@ -58,3 +58,4 @@ SUPABASE_SERVICE_ROLE_KEY=
 
 Privado
 # scanela
+# scanela
