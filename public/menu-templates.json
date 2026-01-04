@@ -1,0 +1,1226 @@
+{
+  "pizzeria": {
+    "name": "Pizzería Artesanal",
+    "icon": "🍕",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Pizzas Clásicas",
+        "products": [
+          {
+            "id": 1,
+            "name": "Margherita",
+            "description": "Tomate fresco, mozzarella bufala y albahaca",
+            "price": 0,
+            "imageUrl": "/images/products/pizzas/margherita.jpg",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeña", "price": 10.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediana", "price": 14.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande", "price": 18.99, "allowCombinations": true },
+                { "id": 4, "name": "Familiar", "price": 24.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "name": "Pepperoni Premium",
+            "description": "Salsa de tomate casera y pepperoni italiano",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeña", "price": 11.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediana", "price": 15.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande", "price": 19.99, "allowCombinations": true },
+                { "id": 4, "name": "Familiar", "price": 25.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "name": "Cuatro Quesos",
+            "description": "Mozzarella, parmesano, gorgonzola y ricotta",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeña", "price": 13.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediana", "price": 17.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande", "price": 21.99, "allowCombinations": true },
+                { "id": 4, "name": "Familiar", "price": 27.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "name": "Carnes Mixtas",
+            "description": "Jamón, bacon, chorizo y carne molida",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeña", "price": 12.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediana", "price": 16.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande", "price": 20.99, "allowCombinations": true },
+                { "id": 4, "name": "Familiar", "price": 26.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "name": "Vegetariana",
+            "description": "Pimiento, cebolla, champiñones, tomate y aceitunas",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeña", "price": 10.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediana", "price": 14.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande", "price": 18.99, "allowCombinations": true },
+                { "id": 4, "name": "Familiar", "price": 24.99, "allowCombinations": true }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Pizzas Especiales",
+        "products": [
+          {
+            "id": 6,
+            "name": "BBQ Smokehouse",
+            "description": "Salsa BBQ, pulled pork, cebolla roja y queso ahumado",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Mediana", "price": 17.99, "allowCombinations": true },
+                { "id": 2, "name": "Grande", "price": 21.99, "allowCombinations": true },
+                { "id": 3, "name": "Familiar", "price": 27.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "name": "La Blanca",
+            "description": "Crema fresca, mozzarella, parmesano y ajo",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Mediana", "price": 15.99, "allowCombinations": true },
+                { "id": 2, "name": "Grande", "price": 19.99, "allowCombinations": true },
+                { "id": 3, "name": "Familiar", "price": 25.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "name": "Salmón Premium",
+            "description": "Salmón ahumado, queso crema y eneldo fresco",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Mediana", "price": 19.99, "allowCombinations": true },
+                { "id": 2, "name": "Grande", "price": 23.99, "allowCombinations": true }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Bebidas y Extras",
+        "products": [
+          {
+            "id": 9,
+            "name": "Coca-Cola",
+            "description": "350ml - Bien fría",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 10,
+            "name": "Agua Mineral",
+            "description": "500ml - Natural o con gas",
+            "price": 1.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 11,
+            "name": "Cerveza Artesanal",
+            "description": "355ml - Varias opciones",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 12,
+            "name": "Tabla de Entrada",
+            "description": "Tabla de quesos y jamones variados",
+            "price": 12.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  },
+  "cafeteria": {
+    "name": "Café & Pastelería",
+    "icon": "☕",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Bebidas de Especialidad",
+        "products": [
+          {
+            "id": 1,
+            "name": "Espresso",
+            "description": "Espresso italiano concentrado y cremoso",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 2,
+            "name": "Americano",
+            "description": "Espresso diluido en agua caliente suave",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (8oz)", "price": 2.99, "allowCombinations": false },
+                { "id": 2, "name": "Grande (12oz)", "price": 3.49, "allowCombinations": false }
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "name": "Capuchino",
+            "description": "Espresso con leche vaporizada y espuma cremosa",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (8oz)", "price": 3.49, "allowCombinations": false },
+                { "id": 2, "name": "Grande (12oz)", "price": 4.49, "allowCombinations": false }
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "name": "Latte Clásico",
+            "description": "Espresso con mucha leche vaporizada suave",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (8oz)", "price": 3.49, "allowCombinations": false },
+                { "id": 2, "name": "Grande (12oz)", "price": 4.49, "allowCombinations": false }
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "name": "Mocaccino",
+            "description": "Espresso, leche y chocolate belga premium",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (8oz)", "price": 3.99, "allowCombinations": false },
+                { "id": 2, "name": "Grande (12oz)", "price": 4.99, "allowCombinations": false }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Bebidas Frías",
+        "products": [
+          {
+            "id": 6,
+            "name": "Café Frío",
+            "description": "Café iced con hielo y cubitos frescos",
+            "price": 3.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 7,
+            "name": "Frappuccino",
+            "description": "Café con hielo, leche y crema batida",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 8,
+            "name": "Jugo Natural",
+            "description": "Jugo fresco recién exprimido diariamente",
+            "price": 3.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 9,
+            "name": "Té Helado",
+            "description": "Té frío infusionado con limón y menta",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Desayunos y Pastelería",
+        "products": [
+          {
+            "id": 10,
+            "name": "Croissant de Mantequilla",
+            "description": "Croissant francés de mantequilla pura",
+            "price": 3.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 11,
+            "name": "Medialunas Variadas",
+            "description": "Dulces o saladas, frescas del horno",
+            "price": 1.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 12,
+            "name": "Scones Caseros",
+            "description": "Scones de mantequilla con mermelada",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 13,
+            "name": "Tostadas Gourmet",
+            "description": "Pan tostado con queso crema y mermelada artesanal",
+            "price": 4.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 14,
+            "name": "Omelette del Día",
+            "description": "Omelette fresco de queso, jamón y vegetales",
+            "price": 6.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Pasteles y Tartas",
+        "products": [
+          {
+            "id": 15,
+            "name": "Torta de Chocolate",
+            "description": "Torta casera de chocolate oscuro",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 16,
+            "name": "Cheesecake",
+            "description": "Cheesecake cremoso con frutos rojos",
+            "price": 5.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 17,
+            "name": "Brownies Calientes",
+            "description": "Brownies de chocolate belga recién horneados",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 18,
+            "name": "Macarons",
+            "description": "Macarons franceses variedad de sabores",
+            "price": 1.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  },
+  "heladeria": {
+    "name": "Heladería Artesanal",
+    "icon": "🍦",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Helados Clásicos",
+        "products": [
+          {
+            "id": 1,
+            "name": "Vainilla",
+            "description": "Helado de vainilla pura de Madagascar",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 2.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 4.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 6.99, "allowCombinations": true },
+                { "id": 4, "name": "Gigante (4 bolas)", "price": 8.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "name": "Chocolate Belga",
+            "description": "Helado de chocolate belga oscuro artesanal",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 3.49, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 5.49, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 7.49, "allowCombinations": true },
+                { "id": 4, "name": "Gigante (4 bolas)", "price": 9.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "name": "Fresa",
+            "description": "Helado de fresa fresca de la estación",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 2.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 4.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 6.99, "allowCombinations": true },
+                { "id": 4, "name": "Gigante (4 bolas)", "price": 8.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "name": "Pistacho Premium",
+            "description": "Helado de pistacho siciliano premium",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 3.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 5.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 7.99, "allowCombinations": true },
+                { "id": 4, "name": "Gigante (4 bolas)", "price": 10.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "name": "Menta Chocolate",
+            "description": "Helado de menta fresca con chips de chocolate",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 3.49, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 5.49, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 7.49, "allowCombinations": true }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Helados Premium",
+        "products": [
+          {
+            "id": 6,
+            "name": "Tiramisú Italiano",
+            "description": "Helado de tiramisú italiano auténtico",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 4.49, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 6.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 9.49, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "name": "Dulce de Leche",
+            "description": "Helado con dulce de leche artesanal casero",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 3.99, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 5.99, "allowCombinations": true },
+                { "id": 3, "name": "Grande (3 bolas)", "price": 8.99, "allowCombinations": true }
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "name": "Salted Caramel",
+            "description": "Helado de caramelo con sal marina",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Pequeño (1 bola)", "price": 4.49, "allowCombinations": false },
+                { "id": 2, "name": "Mediano (2 bolas)", "price": 6.99, "allowCombinations": true }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Bebidas y Postres",
+        "products": [
+          {
+            "id": 9,
+            "name": "Batido de Helado",
+            "description": "Batido cremoso preparado con helados",
+            "price": 5.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 10,
+            "name": "Helado Sándwich",
+            "description": "Helado entre dos galletas caseras",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 11,
+            "name": "Agua de Fruta",
+            "description": "Agua fresca de frutas naturales",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  },
+  "restaurante": {
+    "name": "Restaurante Gourmet",
+    "icon": "🍽️",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Entradas",
+        "products": [
+          {
+            "id": 1,
+            "name": "Tabla de Quesos y Jamones",
+            "description": "Selección premium de quesos europeos y jamones ibéricos",
+            "price": 16.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 2,
+            "name": "Camarones al Ajillo",
+            "description": "Camarones frescos salteados en aceite con ajo",
+            "price": 13.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 3,
+            "name": "Tabla de Sushi Mixta",
+            "description": "Variedad de sushi fresco con 15 piezas surtidas",
+            "price": 18.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 4,
+            "name": "Tabla de Frutos del Mar",
+            "description": "Ostras, mejillones y vieiras frescos",
+            "price": 19.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Platos Principales",
+        "products": [
+          {
+            "id": 5,
+            "name": "Milanesa Gourmet",
+            "description": "Milanesa de ternera premium con papas caseras",
+            "price": 15.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 6,
+            "name": "Salmón a la Mantequilla",
+            "description": "Filete de salmón fresco con salsa de mantequilla y limón",
+            "price": 21.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 7,
+            "name": "Pechuga Rellena",
+            "description": "Pechuga de pollo rellena de jamón serrano y queso",
+            "price": 17.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 8,
+            "name": "Bife de Chorizo Premium",
+            "description": "Corte premium de carne de res de 250g",
+            "price": 26.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 9,
+            "name": "Pasta Carbonara",
+            "description": "Pasta fresca casera con salsa de carbonara italiana",
+            "price": 13.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 10,
+            "name": "Risotto de Champiñones",
+            "description": "Risotto cremoso con champiñones porcini",
+            "price": 14.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Ensaladas Frescas",
+        "products": [
+          {
+            "id": 11,
+            "name": "Ensalada César",
+            "description": "Lechuga romana, pollo, queso parmesano y aderezo César",
+            "price": 10.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 12,
+            "name": "Ensalada Mediterránea",
+            "description": "Vegetales frescos, queso feta, aceitunas y vinagreta",
+            "price": 11.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 13,
+            "name": "Ensalada con Salmón",
+            "description": "Salmón ahumado, lechuga mixta y aderezo bálsamico",
+            "price": 15.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Postres",
+        "products": [
+          {
+            "id": 14,
+            "name": "Tiramisú",
+            "description": "Postre italiano tradicional con mascarpone",
+            "price": 6.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 15,
+            "name": "Cheesecake",
+            "description": "Tarta de queso cremosa con frutos rojos",
+            "price": 6.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 16,
+            "name": "Brownies",
+            "description": "Brownies de chocolate belga caliente",
+            "price": 5.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 17,
+            "name": "Flan Casero",
+            "description": "Flan tradicional con salsa de caramelo",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Bebidas",
+        "products": [
+          {
+            "id": 18,
+            "name": "Vino Tinto",
+            "description": "Copa de vino tinto variedad Malbec",
+            "price": 5.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 19,
+            "name": "Vino Blanco",
+            "description": "Copa de vino blanco variedad Sauvignon Blanc",
+            "price": 5.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 20,
+            "name": "Agua Mineral",
+            "description": "500ml - Natural o con gas",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  },
+  "hamburgueseria": {
+    "name": "Hamburguesería Artesanal",
+    "icon": "🍔",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Hamburguesas Clásicas",
+        "products": [
+          {
+            "id": 1,
+            "name": "Burger Clásica",
+            "description": "Pan casero, carne 100% res, lechuga, tomate y cebolla",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Simple (1 carne)", "price": 8.99, "allowCombinations": false },
+                { "id": 2, "name": "Doble (2 carnes)", "price": 11.99, "allowCombinations": false },
+                { "id": 3, "name": "Triple (3 carnes)", "price": 14.99, "allowCombinations": false }
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "name": "Burger Bacon & Queso",
+            "description": "Con bacon crujiente y queso cheddar fundido",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Simple", "price": 9.99, "allowCombinations": false },
+                { "id": 2, "name": "Doble", "price": 12.99, "allowCombinations": false },
+                { "id": 3, "name": "Triple", "price": 15.99, "allowCombinations": false }
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "name": "Burger Deluxe",
+            "description": "Queso doble, cebolla caramelizada, champiñones y huevo",
+            "price": 0,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": true,
+            "variants": {
+              "sizes": [
+                { "id": 1, "name": "Simple", "price": 10.99, "allowCombinations": false },
+                { "id": 2, "name": "Doble", "price": 13.99, "allowCombinations": false }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Burgers Premium",
+        "products": [
+          {
+            "id": 4,
+            "name": "BBQ Smokehouse",
+            "description": "Carne, cebolla caramelizada, salsa BBQ, bacon y queso ahumado",
+            "price": 12.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 5,
+            "name": "Picante Lovers",
+            "description": "Jalapeños frescos, cheddar, huevo y salsa picante casera",
+            "price": 11.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 6,
+            "name": "Burger Gourmet",
+            "description": "Carne premium, queso azul, rúcula y cebolla morada",
+            "price": 13.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Acompañamientos",
+        "products": [
+          {
+            "id": 7,
+            "name": "Papas Fritas Crujientes",
+            "description": "Porción de papas fritas caseras y crujientes",
+            "price": 3.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 8,
+            "name": "Aros de Cebolla",
+            "description": "Aros de cebolla fritos con salsa de la casa",
+            "price": 3.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 9,
+            "name": "Alitas de Pollo",
+            "description": "6 alitas sazonadas y horneadas",
+            "price": 7.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 10,
+            "name": "Ensalada Fresca",
+            "description": "Ensalada variada con vegetales frescos diarios",
+            "price": 5.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Bebidas",
+        "products": [
+          {
+            "id": 11,
+            "name": "Coca-Cola",
+            "description": "Gaseosa fría 350ml",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 12,
+            "name": "Milkshake",
+            "description": "Milkshake cremoso chocolate, vainilla o fresa",
+            "price": 5.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 13,
+            "name": "Cerveza",
+            "description": "Cerveza fría 355ml variedad a elegir",
+            "price": 4.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  },
+  "panaderia": {
+    "name": "Panadería Artesanal",
+    "icon": "🥐",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Panes Frescos",
+        "products": [
+          {
+            "id": 1,
+            "name": "Pan Francés",
+            "description": "Pan francés crujiente horneado diariamente",
+            "price": 1.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 2,
+            "name": "Pan Integral",
+            "description": "Pan integral 100% con semillas y nutrientes",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 3,
+            "name": "Pan de Nueces",
+            "description": "Pan artesanal casero con nueces frescas",
+            "price": 3.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 4,
+            "name": "Pan de Chocolate",
+            "description": "Pan dulce artesanal con chocolate belga",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 5,
+            "name": "Pan Rústico",
+            "description": "Pan rústico con corteza crujiente y miga suave",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Pastelería Francesa",
+        "products": [
+          {
+            "id": 6,
+            "name": "Croissants Mantequilla",
+            "description": "Croissants franceses hojaldre de mantequilla pura",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 7,
+            "name": "Medialunas Dulces",
+            "description": "Medialunas dulces de mantequilla caseras",
+            "price": 1.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 8,
+            "name": "Medialunas Saladas",
+            "description": "Medialunas saladas con queso y jamón",
+            "price": 1.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 9,
+            "name": "Pain au Chocolat",
+            "description": "Hojaldre francés relleno de chocolate belga",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 10,
+            "name": "Éclair de Vainilla",
+            "description": "Éclair francés relleno de crema de vainilla",
+            "price": 3.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Tartas y Postres",
+        "products": [
+          {
+            "id": 11,
+            "name": "Torta de Chocolate",
+            "description": "Torta casera de chocolate oscuro artesanal",
+            "price": 18.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 12,
+            "name": "Tarta de Fresa",
+            "description": "Tarta con fresas frescas y crema pastelera",
+            "price": 19.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 13,
+            "name": "Cupcakes Variados",
+            "description": "Cupcakes decorados variedad de sabores (c/u)",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 14,
+            "name": "Brownies de Chocolate",
+            "description": "Brownies caseros de chocolate recién horneados",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Bebidas Calientes",
+        "products": [
+          {
+            "id": 15,
+            "name": "Café",
+            "description": "Café recién molido y preparado artesanalmente",
+            "price": 2.49,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 16,
+            "name": "Chocolate Caliente",
+            "description": "Chocolate cremoso y caliente belga premium",
+            "price": 3.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          },
+          {
+            "id": 17,
+            "name": "Té",
+            "description": "Té variedad de sabores recién infusionado",
+            "price": 2.99,
+            "imageUrl": "",
+            "active": true,
+            "hasVariants": false,
+            "variants": { "sizes": [] }
+          }
+        ]
+      }
+    ]
+  }
+}

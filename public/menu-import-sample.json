@@ -1,0 +1,156 @@
+{
+  "business_name": "Velchi Pizzerias",
+  "theme": "orange",
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Pizzas Clásicas",
+      "products": [
+        {
+          "id": "prod-1",
+          "name": "Hawaiana",
+          "description": "Piña, jamón, queso mozzarella",
+          "price": 12500,
+          "image_url": "https://via.placeholder.com/300?text=Hawaiana",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-1",
+              "name": "Pequeña",
+              "price": 12500,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-2",
+              "name": "Mediana",
+              "price": 15000,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-3",
+              "name": "Grande",
+              "price": 18000,
+              "allowCombinations": true
+            }
+          ]
+        },
+        {
+          "id": "prod-2",
+          "name": "Napolitana",
+          "description": "Tomate, mozzarella, albahaca fresca",
+          "price": 11500,
+          "image_url": "https://via.placeholder.com/300?text=Napolitana",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-4",
+              "name": "Pequeña",
+              "price": 11500,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-5",
+              "name": "Mediana",
+              "price": 14000,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-6",
+              "name": "Grande",
+              "price": 17000,
+              "allowCombinations": true
+            }
+          ]
+        },
+        {
+          "id": "prod-3",
+          "name": "BBQ",
+          "description": "Pollo, cebolla caramelizada, salsa BBQ",
+          "price": 13500,
+          "image_url": "https://via.placeholder.com/300?text=BBQ",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-7",
+              "name": "Pequeña",
+              "price": 13500,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-8",
+              "name": "Mediana",
+              "price": 16000,
+              "allowCombinations": true
+            },
+            {
+              "id": "size-9",
+              "name": "Grande",
+              "price": 19000,
+              "allowCombinations": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cat-2",
+      "name": "Bebidas",
+      "products": [
+        {
+          "id": "prod-4",
+          "name": "Coca Cola",
+          "description": "Bebida refrescante 350ml",
+          "price": 3000,
+          "image_url": "https://via.placeholder.com/300?text=Coca+Cola",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-10",
+              "name": "Normal",
+              "price": 3000,
+              "allowCombinations": false
+            }
+          ]
+        },
+        {
+          "id": "prod-5",
+          "name": "Agua",
+          "description": "Agua mineral 500ml",
+          "price": 2000,
+          "image_url": "https://via.placeholder.com/300?text=Agua",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-11",
+              "name": "Normal",
+              "price": 2000,
+              "allowCombinations": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cat-3",
+      "name": "Postres",
+      "products": [
+        {
+          "id": "prod-6",
+          "name": "Brownie",
+          "description": "Brownies de chocolate casero",
+          "price": 5000,
+          "image_url": "https://via.placeholder.com/300?text=Brownie",
+          "active": true,
+          "sizes": [
+            {
+              "id": "size-12",
+              "name": "Individual",
+              "price": 5000,
+              "allowCombinations": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
