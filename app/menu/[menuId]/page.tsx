@@ -51,7 +51,7 @@ export default function MenuPage() {
         const { data, error: fetchError } = await supabase
           .from('menus')
           .select('*')
-          .eq('id', menuId)
+          .eq('id', parseInt(menuId) || menuId)
           .single();
 
         if (fetchError) {
