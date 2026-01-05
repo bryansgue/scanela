@@ -532,6 +532,16 @@ export default function MenuEditor({
                 <p className="text-xs text-gray-500">
                   Usa solo letras, números y guiones. Máximo 50 caracteres.
                 </p>
+                {menu.customSlug && (
+                  <a
+                    href={`https://scanela.com/${menu.customSlug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    🔗 Visitar: scanela.com/{menu.customSlug}
+                  </a>
+                )}
               </div>
             </div>
 
