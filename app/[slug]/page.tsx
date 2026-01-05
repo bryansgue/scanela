@@ -19,11 +19,11 @@ export default function SlugRedirectPage() {
 
     const redirectToMenu = async () => {
       try {
-        // Buscar el slug en la BD
+        // Buscar el slug en la tabla menus
         const { data, error } = await supabase
-          .from('menu_slugs')
-          .select('business_id')
-          .eq('slug', slug)
+          .from('menus')
+          .select('id')
+          .eq('custom_slug', slug.toLowerCase())
           .single();
 
         if (error || !data) {
@@ -32,8 +32,8 @@ export default function SlugRedirectPage() {
           return;
         }
 
-        // Slug existe, redirigir al menú con el business_id
-        router.push(`/menu/${data.business_id}`);
+        // Slug existe, redirigir al menú con el ID
+        router.push(`/menu/${data.id}`);
       } catch (err) {
         console.error('Error en redirect:', err);
         router.push('/not-found');

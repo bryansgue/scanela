@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
         business_name: businessName,
         theme: theme,
         menu_data: menuData,
+        custom_slug: menuData?.customSlug ? menuData.customSlug.toLowerCase().trim() : null,
       };
 
       // Si existe, comparar si hay cambios reales

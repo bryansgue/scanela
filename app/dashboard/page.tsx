@@ -428,6 +428,8 @@ export default function DashboardPage() {
           allMenusRef.current.set(selectedBusiness.id, result.menu);
           console.log('✅ Cache actualizado para negocio:', selectedBusiness.id);
         }
+
+        // 💾 Guardar slug personalizado en la tabla menus (se guarda con el payload principal)
         
         return true;
       } else {

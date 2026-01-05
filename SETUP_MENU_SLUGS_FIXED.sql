@@ -1,8 +1,11 @@
--- Crear tabla menu_slugs para guardar slugs personalizados
+-- Eliminar tabla anterior si existe
+DROP TABLE IF EXISTS menu_slugs CASCADE;
+
+-- Crear tabla menu_slugs para guardar slugs personalizados (VERSIÓN CORREGIDA)
 CREATE TABLE menu_slugs (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  business_id BIGINT NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
+  business_id UUID NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
   slug TEXT NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
