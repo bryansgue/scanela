@@ -51,8 +51,8 @@ export default function MenuPage() {
         const { data, error: fetchError } = await supabase
           .from('menus')
           .select('*')
-          .eq('id', parseInt(menuId) || menuId)
-          .single();
+          .eq('id', menuId)
+          .maybeSingle();
 
         if (fetchError) {
           console.error('Error de Supabase:', fetchError);
@@ -60,7 +60,7 @@ export default function MenuPage() {
         }
 
         if (!data) {
-          throw new Error('No data returned from database');
+          throw new Error('No menu found with this ID');
         }
 
         console.log('Datos COMPLETOS de Supabase:', JSON.stringify(data, null, 2));

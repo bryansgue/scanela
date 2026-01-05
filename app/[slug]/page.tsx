@@ -24,7 +24,7 @@ export default function SlugRedirectPage() {
           .from('menus')
           .select('id')
           .eq('custom_slug', slug.toLowerCase())
-          .single();
+          .maybeSingle();
 
         if (error || !data) {
           // Slug no existe, mostrar 404
