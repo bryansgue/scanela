@@ -37,7 +37,7 @@ import { Plus, Trash2, ChevronDown, GripVertical, Settings2, X, Copy, Phone, Clo
 import { useState, useEffect } from 'react';
 import VariantPanel from './VariantPanel';
 import CategoryVariantPanel from './CategoryVariantPanel';
-import ImageUpload from './ImageUpload';
+import ImageUpload, { type ImageStorageEvent } from './ImageUpload';
 
 export default function MenuEditor({
   menu,
@@ -48,6 +48,7 @@ export default function MenuEditor({
   theme = 'orange',
   onThemeChange,
   onSaveMenu,
+  onImageStorageEvent,
 }: {
   menu: any;
   onUpdate: (menu: any) => void;
@@ -57,6 +58,7 @@ export default function MenuEditor({
   theme?: string;
   onThemeChange?: (theme: string) => void;
   onSaveMenu?: () => Promise<boolean>;
+  onImageStorageEvent?: (event: ImageStorageEvent) => void;
 }) {
   // Helper para obtener colores del tema
   const getThemeColors = (t: string) => {
@@ -575,6 +577,7 @@ export default function MenuEditor({
                   const newMenu = { ...menu, [key]: offset };
                   onUpdate(newMenu);
                 }}
+                onStorageEvent={onImageStorageEvent}
               />
             </div>
 
@@ -957,6 +960,7 @@ export default function MenuEditor({
                                 productName={product.name || 'producto'}
                                 businessId={businessId}
                                 productId={product.id}
+                                onStorageEvent={onImageStorageEvent}
                               />
                             </div>
                           )}

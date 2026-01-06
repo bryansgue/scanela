@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { resolvePublicAssetUrl } from '../../lib/assetUtils';
 
 export default function MenuDisplay({
   menu,
@@ -172,7 +173,9 @@ export default function MenuDisplay({
       {/* Productos */}
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {selectedCategory && selectedCategory.products && selectedCategory.products.length > 0 ? (
-          selectedCategory.products.map((product: any, idx: number) => (
+          selectedCategory.products.map((product: any, idx: number) => {
+            const productImageSrc = resolvePublicAssetUrl(product.imageUrl);
+            return (
             <div
               key={product.id}
               className={`border-2 ${colors.border} rounded-lg overflow-hidden transition-all duration-500 ${
@@ -189,10 +192,10 @@ export default function MenuDisplay({
                   <div className="w-24 h-24 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-4xl shadow-md overflow-hidden bg-gray-300">
                     {product.imageUrl ? (
                       <img
-                        src={product.imageUrl}
+                        src={productImageSrc}
                         alt={product.name}
                         className="w-full h-full object-cover"
-                        key={product.imageUrl}
+                        key={productImageSrc}
                       />
                     ) : (
                       <div className="text-3xl">📷</div>
@@ -383,7 +386,8 @@ export default function MenuDisplay({
                 )}
               </div>
             </div>
-          ))
+          );
+          })
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
             <p className="text-xs text-center">

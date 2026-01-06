@@ -89,11 +89,10 @@ export default function QRPrintPage() {
     const generateQR = async () => {
       try {
         const QRCode = (await import('qrcode')).default;
-        const isDev = process.env.NODE_ENV === 'development';
-        const baseUrl = isDev 
-          ? 'http://192.168.0.179:3000'
-          : (process.env.NEXT_PUBLIC_SITE_URL || 'https://scanela.app');
-        const qrUrl = `${baseUrl}/menu/${businessId}`;
+        const customSlug = businessInfo?.custom_slug || businessInfo?.menuData?.customSlug;
+        const qrUrl = customSlug
+          ? `https://scanela.com/${customSlug}`
+          : `https://scanela.com/menu/${businessId}`;
 
         // Mapa de colores del tema
         const themeColorMap: Record<string, string> = {
@@ -194,7 +193,7 @@ export default function QRPrintPage() {
     };
 
     generateQR();
-  }, [businessId, isAuthenticated, theme]);
+  }, [businessId, isAuthenticated, theme, businessInfo?.custom_slug, businessInfo?.menuData?.customSlug]);
 
   const getThemeColors = (t: string) => {
     const themes: Record<string, { 

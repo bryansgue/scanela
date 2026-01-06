@@ -26,10 +26,10 @@
           },
           {
             "id": 2,
-            "name": "Pepperoni Premium",
+            "name": "Pepperoni",
             "description": "Salsa de tomate casera y pepperoni italiano",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "/images/products/pizzas/pepperoni.jpg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -46,7 +46,7 @@
             "name": "Cuatro Quesos",
             "description": "Mozzarella, parmesano, gorgonzola y ricotta",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "/images/products/pizzas/cuatro_quesos.jpg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -63,7 +63,7 @@
             "name": "Carnes Mixtas",
             "description": "Jamón, bacon, chorizo y carne molida",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "/images/products/pizzas/carnes.jpeg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -80,7 +80,7 @@
             "name": "Vegetariana",
             "description": "Pimiento, cebolla, champiñones, tomate y aceitunas",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "/images/products/pizzas/vegetariana.jpeg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -96,54 +96,37 @@
       },
       {
         "id": 2,
-        "name": "Pizzas Especiales",
+        "name": "Ensaladas",
         "products": [
           {
             "id": 6,
-            "name": "BBQ Smokehouse",
-            "description": "Salsa BBQ, pulled pork, cebolla roja y queso ahumado",
-            "price": 0,
+            "name": "Ensalada César",
+            "description": "Lechuga romana, queso parmesano, crutones y aderezo César casero",
+            "price": 9.99,
             "imageUrl": "",
             "active": true,
-            "hasVariants": true,
-            "variants": {
-              "sizes": [
-                { "id": 1, "name": "Mediana", "price": 17.99, "allowCombinations": true },
-                { "id": 2, "name": "Grande", "price": 21.99, "allowCombinations": true },
-                { "id": 3, "name": "Familiar", "price": 27.99, "allowCombinations": true }
-              ]
-            }
+            "hasVariants": false,
+            "variants": { "sizes": [] }
           },
           {
             "id": 7,
-            "name": "La Blanca",
-            "description": "Crema fresca, mozzarella, parmesano y ajo",
-            "price": 0,
+            "name": "Ensalada Mediterránea",
+            "description": "Tomate, pepino, cebolla morada, queso feta y aceitunas",
+            "price": 10.99,
             "imageUrl": "",
             "active": true,
-            "hasVariants": true,
-            "variants": {
-              "sizes": [
-                { "id": 1, "name": "Mediana", "price": 15.99, "allowCombinations": true },
-                { "id": 2, "name": "Grande", "price": 19.99, "allowCombinations": true },
-                { "id": 3, "name": "Familiar", "price": 25.99, "allowCombinations": true }
-              ]
-            }
+            "hasVariants": false,
+            "variants": { "sizes": [] }
           },
           {
             "id": 8,
-            "name": "Salmón Premium",
-            "description": "Salmón ahumado, queso crema y eneldo fresco",
-            "price": 0,
+            "name": "Ensalada Caprese",
+            "description": "Mozzarella fresca, tomate cherry, albahaca y aceite de oliva",
+            "price": 11.99,
             "imageUrl": "",
             "active": true,
-            "hasVariants": true,
-            "variants": {
-              "sizes": [
-                { "id": 1, "name": "Mediana", "price": 19.99, "allowCombinations": true },
-                { "id": 2, "name": "Grande", "price": 23.99, "allowCombinations": true }
-              ]
-            }
+            "hasVariants": false,
+            "variants": { "sizes": [] }
           }
         ]
       },

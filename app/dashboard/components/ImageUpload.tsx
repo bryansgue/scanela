@@ -4,6 +4,20 @@ import { Upload, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
 
+export type ImageStorageEvent =
+  | {
+      type: 'upload';
+      newUrl: string;
+      storagePath: string;
+      previousUrl?: string | null;
+      businessId: number;
+    }
+  | {
+      type: 'delete';
+      previousUrl?: string | null;
+      businessId: number;
+    };
+
 interface ImageUploadProps {
   currentImage: string | null;
   onImageChange: (url: string | null) => void;
@@ -17,6 +31,7 @@ interface ImageUploadProps {
   logoOffsetY?: number;
   onLogoOffsetYChange?: (offset: number) => void;
   logoMode?: string;
+  onStorageEvent?: (event: ImageStorageEvent) => void;
 }
 
 export default function ImageUpload({
@@ -32,9 +47,18 @@ export default function ImageUpload({
   logoOffsetY = 0,
   onLogoOffsetYChange,
   logoMode = 'logo-name',
+  onStorageEvent,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const supabaseBaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '');
+  const supabaseStorageBaseUrl = supabaseBaseUrl
+    ? `${supabaseBaseUrl}/storage/v1/object/public/menu-images/`
+    : '';
+  const isSupabaseStorageImage = (url?: string | null) => {
+    if (!url || !supabaseStorageBaseUrl) return false;
+    return url.startsWith(supabaseStorageBaseUrl);
+  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,7 +102,17 @@ export default function ImageUpload({
       const data = await response.json();
 
       if (data.success) {
+        const previousUrl = currentImage;
         onImageChange(data.url);
+        if (data.path) {
+          onStorageEvent?.({
+            type: 'upload',
+            newUrl: data.url,
+            storagePath: data.path,
+            previousUrl: isSupabaseStorageImage(previousUrl) ? previousUrl : undefined,
+            businessId,
+          });
+        }
       } else {
         alert('Error: ' + data.error);
       }
@@ -90,6 +124,18 @@ export default function ImageUpload({
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    if (uploading) return;
+    const previousUrl = currentImage;
+    onImageChange(null);
+    if (previousUrl && isSupabaseStorageImage(previousUrl)) {
+      onStorageEvent?.({ type: 'delete', previousUrl, businessId });
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -124,8 +170,9 @@ export default function ImageUpload({
                 </button>
                 {currentImage && (
                   <button
-                    onClick={() => onImageChange(null)}
-                    className="p-1 bg-white/90 hover:bg-white text-red-600 rounded-lg transition"
+                    onClick={handleRemoveImage}
+                    disabled={uploading}
+                    className="p-1 bg-white/90 hover:bg-white text-red-600 rounded-lg transition disabled:opacity-50"
                     title="Eliminar imagen"
                   >
                     <X size={16} />

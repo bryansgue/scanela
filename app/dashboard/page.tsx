@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase/client';
+import { resolvePublicAssetUrl } from '../../lib/assetUtils';
 import { useUserPlan } from '../context/UserPlanContext';
 import PrivateLayout from '../components/PrivateLayout';
 import Spinner from '../components/Spinner';
@@ -13,6 +14,23 @@ import MenuEditor from './components/MenuEditor';
 import MenuPreview from './components/MenuPreview';
 import PlanBadge from './components/PlanBadge';
 import TemplatesSection from './components/TemplatesSection';
+import type { ImageStorageEvent } from './components/ImageUpload';
+
+const supabaseBaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, '') || '';
+const storagePublicPrefix = supabaseBaseUrl
+  ? `${supabaseBaseUrl}/storage/v1/object/public/menu-images/`
+  : '';
+
+const storageUrlToPath = (url?: string | null) => {
+  if (!url || !storagePublicPrefix) return null;
+  if (!url.startsWith(storagePublicPrefix)) return null;
+  return decodeURIComponent(url.slice(storagePublicPrefix.length));
+};
+
+type PendingFile = {
+  path: string;
+  businessId: number;
+};
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -36,6 +54,105 @@ export default function DashboardPage() {
   // Estado para importación
   const [previousMenu, setPreviousMenu] = useState<any>(null);
   const [previousTheme, setPreviousTheme] = useState<string>('orange');
+
+  const pendingUploadsRef = useRef<Map<string, PendingFile>>(new Map());
+  const pendingDeletionsRef = useRef<Map<string, PendingFile>>(new Map());
+
+  const resetPendingImageQueues = useCallback(() => {
+    pendingUploadsRef.current.clear();
+    pendingDeletionsRef.current.clear();
+  }, []);
+
+  const registerImageStorageEvent = useCallback((event: ImageStorageEvent) => {
+    if (!event.businessId) return;
+
+    if (event.type === 'upload') {
+      if (event.storagePath) {
+        pendingUploadsRef.current.set(event.storagePath, {
+          path: event.storagePath,
+          businessId: event.businessId,
+        });
+      }
+
+      if (event.previousUrl) {
+        const previousPath = storageUrlToPath(event.previousUrl);
+        if (previousPath) {
+          pendingDeletionsRef.current.set(previousPath, {
+            path: previousPath,
+            businessId: event.businessId,
+          });
+        }
+      }
+    } else if (event.type === 'delete') {
+      if (event.previousUrl) {
+        const previousPath = storageUrlToPath(event.previousUrl);
+        if (previousPath) {
+          pendingDeletionsRef.current.set(previousPath, {
+            path: previousPath,
+            businessId: event.businessId,
+          });
+        }
+      }
+    }
+  }, []);
+
+  const deleteStorageEntries = useCallback(async (entries: PendingFile[]) => {
+    if (!entries.length) return;
+
+    let authToken = token;
+    if (!authToken) {
+      const { data: { session } } = await supabase.auth.getSession();
+      authToken = session?.access_token || '';
+    }
+
+    if (!authToken) {
+      console.error('❌ No hay token para eliminar archivos de Storage');
+      return;
+    }
+
+    await Promise.all(
+      entries.map(async ({ path, businessId }) => {
+        try {
+          const response = await fetch('/api/upload-image', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              storagePath: path,
+              businessId,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Error eliminando archivo de Storage', path, errorText);
+          }
+        } catch (error) {
+          console.error('❌ Error en petición de borrado de Storage', path, error);
+        }
+      })
+    );
+  }, [token]);
+
+  const finalizeImageChangesAfterSave = useCallback(async () => {
+    const deletions = Array.from(pendingDeletionsRef.current.values());
+    if (deletions.length > 0) {
+      await deleteStorageEntries(deletions);
+    }
+    pendingDeletionsRef.current.clear();
+    pendingUploadsRef.current.clear();
+  }, [deleteStorageEntries]);
+
+  const discardImageChanges = useCallback(async () => {
+    const uploads = Array.from(pendingUploadsRef.current.values());
+    if (uploads.length > 0) {
+      await deleteStorageEntries(uploads);
+    }
+    pendingUploadsRef.current.clear();
+    pendingDeletionsRef.current.clear();
+  }, [deleteStorageEntries]);
 
   const { plan: userPlan } = useUserPlan();
   const isDemo = !userPlan || userPlan === null;
@@ -326,6 +443,7 @@ export default function DashboardPage() {
         setMenuData(newMenuData);
         setTheme(newTheme);
         setHasUnsavedChanges(false);
+        resetPendingImageQueues();
       } else {
         // Si no hay menú guardado, usar valores por defecto
         console.log('📄 Nuevo negocio - usando menú por defecto para negocio:', businessId);
@@ -345,6 +463,7 @@ export default function DashboardPage() {
         setMenuData(defaultMenu);
         setTheme(defaultTheme);
         setHasUnsavedChanges(false);
+        resetPendingImageQueues();
       }
     } catch (error) {
       console.error('Error loading menu from Supabase:', error);
@@ -362,6 +481,7 @@ export default function DashboardPage() {
         businessId: actualBusinessId,
       });
       setHasUnsavedChanges(false);
+      resetPendingImageQueues();
     } finally {
       // ✅ Permitir que change detection se dispare nuevamente
       isLoadingMenuRef.current = false;
@@ -524,6 +644,7 @@ export default function DashboardPage() {
         products: cat.products.map((prod: any, prodIdx: number) => ({
           ...prod,
           id: Date.now() + catIdx + prodIdx,
+          imageUrl: resolvePublicAssetUrl(prod.imageUrl),
           variants: {
             ...prod.variants,
             sizes: (prod.variants?.sizes || []).map((size: any, sizeIdx: number) => ({
@@ -871,6 +992,7 @@ export default function DashboardPage() {
                       
                       const success = await saveMenuToSupabase(token);
                       if (success) {
+                        await finalizeImageChangesAfterSave();
                         lastSavedJSON.current = JSON.stringify({
                           menuData,
                           theme,
@@ -899,9 +1021,10 @@ export default function DashboardPage() {
                   </button>
             
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (lastSavedJSON.current) {
                         try {
+                          await discardImageChanges();
                           const lastSavedData = JSON.parse(lastSavedJSON.current);
                           setMenuData(JSON.parse(JSON.stringify(lastSavedData.menuData)));
                           setTheme(lastSavedData.theme);
@@ -983,6 +1106,7 @@ export default function DashboardPage() {
                 }}
                 theme={theme}
                 onThemeChange={setTheme}
+                onImageStorageEvent={registerImageStorageEvent}
               />
             </div>
           </div>

@@ -1,54 +1,36 @@
-'use client';
+import { cache } from 'react';
+import { redirect, notFound } from 'next/navigation';
+import { getSupabaseAdminClient } from '../../lib/supabaseServer';
 
-import { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+const fetchMenuIdBySlug = cache(async (slug: string) => {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('menus')
+    .select('id')
+    .eq('custom_slug', slug)
+    .maybeSingle();
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+  if (error || !data) {
+    console.error('Slug lookup failed:', error?.message || 'sin resultados');
+    return null;
+  }
 
-export default function SlugRedirectPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params?.slug as string;
+  return data.id;
+});
 
-  useEffect(() => {
-    if (!slug) return;
+export const revalidate = 60;
 
-    const redirectToMenu = async () => {
-      try {
-        // Buscar el slug en la tabla menus
-        const { data, error } = await supabase
-          .from('menus')
-          .select('id')
-          .eq('custom_slug', slug.toLowerCase())
-          .maybeSingle();
+export default async function SlugRedirectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug: rawSlug } = await params;
+  const slug = rawSlug?.toLowerCase();
+  if (!slug) {
+    notFound();
+  }
 
-        if (error || !data) {
-          // Slug no existe, mostrar 404
-          router.push('/not-found');
-          return;
-        }
+  const menuId = await fetchMenuIdBySlug(slug);
+  if (!menuId) {
+    notFound();
+  }
 
-        // Slug existe, redirigir al menú con el ID
-        router.push(`/menu/${data.id}`);
-      } catch (err) {
-        console.error('Error en redirect:', err);
-        router.push('/not-found');
-      }
-    };
-
-    redirectToMenu();
-  }, [slug, router]);
-
-  return (
-    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <div className="animate-spin text-4xl mb-4">⏳</div>
-        <p className="text-gray-600 font-medium">Cargando menú...</p>
-      </div>
-    </div>
-  );
+  redirect(`/menu/${menuId}`);
 }
