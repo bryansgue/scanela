@@ -1,0 +1,5 @@
+[
+  {"id":"1","title":"Simplificar vista QR","status":"pending"},
+  {"id":"2","title":"Generar PDF directo con jsPDF","status":"pending"},
+  {"id":"3","title":"Validar lint","status":"pending"}
+]

@@ -50,6 +50,12 @@ export default function ImageUpload({
   onStorageEvent,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  type OptimizationStatus =
+    | { state: 'optimized'; format: 'webp' | 'jpeg'; savingsPct?: number }
+    | { state: 'original' }
+    | null;
+
+  const [optimizationStatus, setOptimizationStatus] = useState<OptimizationStatus>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabaseBaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '');
   const supabaseStorageBaseUrl = supabaseBaseUrl
@@ -58,6 +64,79 @@ export default function ImageUpload({
   const isSupabaseStorageImage = (url?: string | null) => {
     if (!url || !supabaseStorageBaseUrl) return false;
     return url.startsWith(supabaseStorageBaseUrl);
+  };
+
+  const MAX_OUTPUT_SIZE = 640; // px
+  const JPEG_QUALITY = 0.8;
+  const WEBP_QUALITY = 0.75;
+
+  const encodeCanvas = (canvas: HTMLCanvasElement, type: string, quality: number) =>
+    new Promise<Blob | null>((resolve) => canvas.toBlob((blob) => resolve(blob), type, quality));
+
+  const optimizeImageFile = async (
+    file: File
+  ): Promise<{ file: File; optimized: boolean; format?: 'webp' | 'jpeg'; savingsPct?: number }> => {
+    try {
+      const imageBitmap = await createImageBitmap(file);
+
+      const shortestEdge = Math.min(imageBitmap.width, imageBitmap.height);
+      const cropSize = shortestEdge;
+      const outputSize = Math.min(MAX_OUTPUT_SIZE, cropSize);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = outputSize;
+      canvas.height = outputSize;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        imageBitmap.close();
+        return { file, optimized: false };
+      }
+
+      const offsetX = (imageBitmap.width - cropSize) / 2;
+      const offsetY = (imageBitmap.height - cropSize) / 2;
+
+      ctx.drawImage(
+        imageBitmap,
+        offsetX,
+        offsetY,
+        cropSize,
+        cropSize,
+        0,
+        0,
+        outputSize,
+        outputSize
+      );
+
+      imageBitmap.close();
+
+      let optimizedBlob = await encodeCanvas(canvas, 'image/webp', WEBP_QUALITY);
+      let format: 'webp' | 'jpeg' | undefined = optimizedBlob ? 'webp' : undefined;
+
+      if (!optimizedBlob) {
+        optimizedBlob = await encodeCanvas(canvas, 'image/jpeg', JPEG_QUALITY);
+        format = optimizedBlob ? 'jpeg' : undefined;
+      }
+
+      if (!optimizedBlob || !format) {
+        return { file, optimized: false };
+      }
+
+      const extension = format === 'webp' ? 'webp' : 'jpg';
+      const optimizedFile = new File([
+        optimizedBlob,
+      ], `${file.name.replace(/\.[^.]+$/, '')}-optimized.${extension}`, {
+        type: optimizedBlob.type,
+        lastModified: Date.now(),
+      });
+
+      const savingsPct = Math.max(0, Math.round((1 - optimizedBlob.size / file.size) * 100));
+
+      return { file: optimizedFile, optimized: true, format, savingsPct };
+    } catch (error) {
+      console.warn('No se pudo optimizar la imagen, usando archivo original.', error);
+      return { file, optimized: false };
+    }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +153,8 @@ export default function ImageUpload({
       return;
     }
 
-    setUploading(true);
+  setOptimizationStatus(null);
+  setUploading(true);
 
     try {
       // Obtener token del usuario autenticado
@@ -85,8 +165,10 @@ export default function ImageUpload({
         return;
       }
 
+  const { file: optimizedFile, optimized, format, savingsPct } = await optimizeImageFile(file);
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimizedFile);
       formData.append('productName', productName);
       formData.append('businessId', businessId.toString());
       formData.append('productId', productId);
@@ -113,6 +195,11 @@ export default function ImageUpload({
             businessId,
           });
         }
+        if (optimized) {
+          setOptimizationStatus({ state: 'optimized', format: format ?? 'jpeg', savingsPct });
+        } else {
+          setOptimizationStatus({ state: 'original' });
+        }
       } else {
         alert('Error: ' + data.error);
       }
@@ -131,6 +218,7 @@ export default function ImageUpload({
     if (uploading) return;
     const previousUrl = currentImage;
     onImageChange(null);
+  setOptimizationStatus(null);
     if (previousUrl && isSupabaseStorageImage(previousUrl)) {
       onStorageEvent?.({ type: 'delete', previousUrl, businessId });
     }
@@ -199,7 +287,18 @@ export default function ImageUpload({
 
           <p className="text-xs text-gray-600 mt-2">
             {currentImage ? (
-              <span className="text-green-600 font-bold">✓ Imagen cargada</span>
+              <span className="text-green-600 font-bold">
+                ✓ Imagen cargada{' '}
+                {optimizationStatus?.state === 'optimized' && (
+                  <span>
+                    (optimizada{optimizationStatus.format ? ` · ${optimizationStatus.format.toUpperCase()}` : ''}
+                    {typeof optimizationStatus.savingsPct === 'number'
+                      ? ` · -${optimizationStatus.savingsPct}%`
+                      : ''})
+                  </span>
+                )}
+                {optimizationStatus?.state === 'original' && <span>(original)</span>}
+              </span>
             ) : (
               <span>PNG o JPG (máx 5MB)</span>
             )}

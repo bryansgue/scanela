@@ -12,7 +12,7 @@
             "name": "Margherita",
             "description": "Tomate fresco, mozzarella bufala y albahaca",
             "price": 0,
-            "imageUrl": "/images/products/pizzas/margherita.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/margherita.jpg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -29,7 +29,7 @@
             "name": "Pepperoni",
             "description": "Salsa de tomate casera y pepperoni italiano",
             "price": 0,
-            "imageUrl": "/images/products/pizzas/pepperoni.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/pepperoni.jpg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -46,7 +46,7 @@
             "name": "Cuatro Quesos",
             "description": "Mozzarella, parmesano, gorgonzola y ricotta",
             "price": 0,
-            "imageUrl": "/images/products/pizzas/cuatro_quesos.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/cuatro_quesos.jpg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -63,7 +63,7 @@
             "name": "Carnes Mixtas",
             "description": "Jamón, bacon, chorizo y carne molida",
             "price": 0,
-            "imageUrl": "/images/products/pizzas/carnes.jpeg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/carnes.jpeg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -80,7 +80,7 @@
             "name": "Vegetariana",
             "description": "Pimiento, cebolla, champiñones, tomate y aceitunas",
             "price": 0,
-            "imageUrl": "/images/products/pizzas/vegetariana.jpeg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/vegetariana.jpeg",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -103,7 +103,7 @@
             "name": "Ensalada César",
             "description": "Lechuga romana, queso parmesano, crutones y aderezo César casero",
             "price": 9.99,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/pepperoni.jpg",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
