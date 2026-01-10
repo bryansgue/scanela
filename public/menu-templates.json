@@ -12,7 +12,7 @@
             "name": "Margherita",
             "description": "Tomate fresco, mozzarella bufala y albahaca",
             "price": 0,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/margherita.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Pizzeria/Pizzas/margherita.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -29,7 +29,7 @@
             "name": "Pepperoni",
             "description": "Salsa de tomate casera y pepperoni italiano",
             "price": 0,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/pepperoni.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Pizzeria/Pizzas/pepperoni.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -46,7 +46,7 @@
             "name": "Cuatro Quesos",
             "description": "Mozzarella, parmesano, gorgonzola y ricotta",
             "price": 0,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/cuatro_quesos.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Pizzeria/Pizzas/cuatro_quesos.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -63,7 +63,7 @@
             "name": "Carnes Mixtas",
             "description": "Jamón, bacon, chorizo y carne molida",
             "price": 0,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/carnes.jpeg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Pizzeria/Pizzas/carnes.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -80,7 +80,7 @@
             "name": "Vegetariana",
             "description": "Pimiento, cebolla, champiñones, tomate y aceitunas",
             "price": 0,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/vegetariana.jpeg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Pizzeria/Pizzas/vegetariana.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -103,7 +103,7 @@
             "name": "Ensalada César",
             "description": "Lechuga romana, queso parmesano, crutones y aderezo César casero",
             "price": 9.99,
-            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/pepperoni.jpg",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/menus/pizzas/pepperoni.webp",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
