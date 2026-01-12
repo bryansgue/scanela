@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PrivateLayout from "../components/PrivateLayout";
 import SettingsSidebar from "./components/SettingsSidebar";
@@ -20,6 +20,25 @@ interface UserProfile {
 }
 
 export default function SettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <PrivateLayout>
+          <div className="min-h-screen bg-gray-100 p-10 flex justify-center items-center">
+            <div className="text-center">
+              <Loader2 size={48} className="animate-spin text-blue-600 mx-auto mb-4" />
+              <p className="text-gray-600">Cargando configuraciones...</p>
+            </div>
+          </div>
+        </PrivateLayout>
+      }
+    >
+      <SettingsPageContent />
+    </Suspense>
+  );
+}
+
+function SettingsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<UserProfile | null>(null);
