@@ -1,6 +1,8 @@
 import { supabase } from "./client";
 
-export type UserPlan = "free" | "menu" | "ventas";
+import { planFromDb, planFromMetadata, planMetadata, planToDb, type PlanId } from "../plans";
+
+export type UserPlan = PlanId;
 
 // ✅ CACHÉ GLOBAL para el plan del usuario
 let planCache: { userId: string; plan: UserPlan; timestamp: number } | null = null;
@@ -109,7 +111,7 @@ export async function getUserPlan(): Promise<UserPlan> {
 
     const { data, error } = await supabase
       .from("subscriptions")
-      .select("plan")
+      .select("plan, plan_metadata")
       .eq("user_id", user.id)
       .single();
 
@@ -120,19 +122,10 @@ export async function getUserPlan(): Promise<UserPlan> {
 
     const dbPlanValue = data?.plan;
     console.log("📊 Plan en BD:", dbPlanValue);
-    
-    // Determinar el plan real según lo guardado en BD
-    let plan: UserPlan = "free";
-    if (dbPlanValue === "pro") {
-      plan = "ventas"; // pro → ventas
-    } else if (dbPlanValue === "free") {
-      plan = "free";   // free → free (nuevo)
-    } else if (dbPlanValue === "basico") {
-      plan = "menu";   // basico → menu (default para Scanela)
-    } else {
-      plan = (dbPlanValue as UserPlan) || "free";
-    }
-    
+
+    const planFromMeta = planFromMetadata(data?.plan_metadata);
+    const plan = planFromMeta ?? planFromDb(dbPlanValue);
+
     console.log("✅ Plan mapeado a:", plan);
     
     // ✅ GUARDAR EN CACHÉ
@@ -152,9 +145,14 @@ export async function getUserPlan(): Promise<UserPlan> {
 
 export function getProfileLimit(plan: UserPlan): number {
   if (plan === "menu" || plan === "ventas") {
-    return 1; // Para Scanela, retornar 1 como valor por defecto
+    return 1;
   }
-  return (PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] as any)?.profiles || 1;
+
+  const entry = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] as
+    | { profiles?: number }
+    | undefined;
+
+  return entry?.profiles ?? 1;
 }
 
 // Crear suscripción inicial para nuevo usuario
@@ -170,15 +168,20 @@ export async function createInitialSubscription(userId: string) {
     if (existing) return; // Ya existe, no crear duplicado
 
     // Crear nueva suscripción con plan básico
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
     const { error } = await supabase
       .from("subscriptions")
       .insert({
         user_id: userId,
-        plan: "basico",
+        plan: planToDb("free"),
+        plan_source: "manual",
         billing_period: "monthly",
         status: "active",
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        current_period_start: now.toISOString(),
+        current_period_end: trialEnd.toISOString(),
+        plan_metadata: planMetadata("free"),
       });
 
     if (error) {
@@ -187,16 +190,6 @@ export async function createInitialSubscription(userId: string) {
   } catch (error) {
     console.error("Error in createInitialSubscription:", error);
   }
-}
-
-// Mapeo de nuevos planes a planes antiguos para compatibilidad con BD
-function mapPlanToDatabase(plan: UserPlan): string {
-  const planMap: Record<UserPlan, string> = {
-    "free": "basico",      // Free = Básico (en BD por restricción CHECK)
-    "menu": "basico",      // Menú = Básico
-    "ventas": "pro",       // Ventas = Pro
-  };
-  return planMap[plan];
 }
 
 // Actualizar el plan del usuario
@@ -211,9 +204,8 @@ export async function updateUserPlan(plan: UserPlan) {
     console.log("🔵 Actualizando plan para usuario:", user.id);
     console.log("📊 Nuevo plan:", plan);
 
-    // Mapear al plan que acepta la BD
-    const dbPlan = mapPlanToDatabase(plan);
-    console.log("🗂️ Plan en BD:", dbPlan);
+  const dbPlan = planToDb(plan);
+  console.log("🗂️ Plan en BD:", dbPlan);
 
     // 1️⃣ Guardar el plan real en user_metadata de Auth
     const { error: authError } = await supabase.auth.updateUser({
@@ -231,7 +223,10 @@ export async function updateUserPlan(plan: UserPlan) {
     const { data: updated, error: updateError } = await supabase
       .from("subscriptions")
       .update({
-        plan: dbPlan,
+        plan: planToDb(plan),
+        plan_source: "manual",
+        billing_period: "monthly",
+        plan_metadata: planMetadata(plan),
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", user.id)

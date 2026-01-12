@@ -52,7 +52,19 @@ app/
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_MENU_MONTHLY=
+STRIPE_PRICE_MENU_ANNUAL=
+STRIPE_PRICE_VENTAS_MONTHLY=
+STRIPE_PRICE_VENTAS_ANNUAL=
 ```
+
+## Scripts útiles
+
+- `npm run inspect:supabase`: imprime datos clave de Supabase (negocios, menús, órdenes y suscripciones) usando tu `.env.local`.
+- Revisa `STRIPE_SETUP.md` para pasos detallados de configuración de claves y webhooks.
 
 ## Licencia
 

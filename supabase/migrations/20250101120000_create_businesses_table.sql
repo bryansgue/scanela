@@ -14,25 +14,28 @@ CREATE INDEX IF NOT EXISTS idx_businesses_user_id ON businesses(user_id);
 -- Row Level Security
 ALTER TABLE businesses ENABLE ROW LEVEL SECURITY;
 
--- Los usuarios solo pueden ver sus propios negocios
+DROP POLICY IF EXISTS "Users can view their own businesses" ON businesses;
 CREATE POLICY "Users can view their own businesses"
   ON businesses
   FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Los usuarios solo pueden insertar sus propios negocios
+DROP POLICY IF EXISTS "Users can insert their own businesses" ON businesses;
 CREATE POLICY "Users can insert their own businesses"
   ON businesses
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Los usuarios solo pueden actualizar sus propios negocios
+DROP POLICY IF EXISTS "Users can update their own businesses" ON businesses;
 CREATE POLICY "Users can update their own businesses"
   ON businesses
   FOR UPDATE
   USING (auth.uid() = user_id);
 
 -- Los usuarios solo pueden eliminar sus propios negocios
+DROP POLICY IF EXISTS "Users can delete their own businesses" ON businesses;
 CREATE POLICY "Users can delete their own businesses"
   ON businesses
   FOR DELETE
@@ -48,6 +51,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger para actualizar automáticamente updated_at
+DROP TRIGGER IF EXISTS update_businesses_updated_at ON businesses;
 CREATE TRIGGER update_businesses_updated_at
   BEFORE UPDATE ON businesses
   FOR EACH ROW

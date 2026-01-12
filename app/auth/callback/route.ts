@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 
+import { planMetadata, planToDb } from "@/lib/plans";
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -46,7 +48,9 @@ export async function GET(request: Request) {
           .from("subscriptions")
           .insert({
             user_id: userId,
-            plan: "basico",
+            plan: planToDb("free"),
+            plan_source: "manual",
+            plan_metadata: planMetadata("free"),
             billing_period: "monthly",
             status: "active",
             current_period_start: now.toISOString(),

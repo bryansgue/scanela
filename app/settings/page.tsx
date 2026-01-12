@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import PrivateLayout from "../components/PrivateLayout";
 import SettingsSidebar from "./components/SettingsSidebar";
 import SettingsProfile from "./components/SettingsProfile";
@@ -21,6 +21,7 @@ interface UserProfile {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +48,18 @@ export default function SettingsPage() {
 
     fetchUser();
   }, [router]);
+
+  useEffect(() => {
+    const requestedTab = searchParams.get("tab");
+    const checkoutStatus = searchParams.get("checkout");
+
+    if (requestedTab === "plan" || checkoutStatus) {
+      setActiveTab("plan");
+      if (checkoutStatus) {
+        router.replace("/settings?tab=plan", { scroll: false });
+      }
+    }
+  }, [router, searchParams]);
 
   const isExternalProvider = user ? isAuthProvider(user.provider) : false;
 
@@ -97,7 +110,10 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <SettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+              <SettingsSidebar activeTab={activeTab} onTabChange={(tab) => {
+                setActiveTab(tab);
+                router.replace(`/settings?tab=${tab}`, { scroll: false });
+              }} />
             </div>
 
             {/* Contenido Principal */}
