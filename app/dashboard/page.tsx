@@ -825,6 +825,119 @@ export default function DashboardPage() {
     );
   }
 
+  const renderSavingStatusBanner = () => {
+    if (!(hasUnsavedChanges || isSaving)) return null;
+
+    return (
+      <div
+        className={`rounded-2xl p-4 transition-all duration-300 border ${
+          savingStatus === 'saving'
+            ? 'bg-blue-50 border-blue-300 text-blue-900'
+            : savingStatus === 'success'
+            ? 'bg-green-50 border-green-300 text-green-900'
+            : savingStatus === 'error'
+            ? 'bg-red-50 border-red-300 text-red-900'
+            : 'bg-yellow-50 border-yellow-300 text-yellow-900'
+        }`}
+      >
+        {savingStatus === 'saving' && (
+          <div className="flex items-center gap-3 font-semibold justify-center">
+            <div className="animate-spin text-xl">⏳</div>
+            <span>Guardando cambios...</span>
+          </div>
+        )}
+
+        {savingStatus === 'success' && (
+          <div className="flex items-center gap-3 font-semibold justify-center">
+            <span className="text-xl">✅</span>
+            <span>Cambios guardados</span>
+          </div>
+        )}
+
+        {savingStatus === 'error' && (
+          <div className="flex items-center gap-3 font-semibold justify-center">
+            <span className="text-xl">❌</span>
+            <span>Error al guardar</span>
+          </div>
+        )}
+
+        {savingStatus === 'idle' && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 font-semibold justify-center">
+              <span className="text-lg">⚠️</span>
+              Cambios sin guardar
+            </div>
+            <div className="flex gap-3 justify-center flex-wrap">
+              <button
+                onClick={async () => {
+                  setSavingStatus('saving');
+                  setIsSaving(true);
+
+                  const success = await saveMenuToSupabase(token);
+                  if (success) {
+                    await finalizeImageChangesAfterSave();
+                    lastSavedJSON.current = JSON.stringify({
+                      menuData,
+                      theme,
+                      businessName: selectedBusiness.name,
+                    });
+                    setHasUnsavedChanges(false);
+                    setSavingStatus('success');
+                    if (savingTimeoutRef.current) clearTimeout(savingTimeoutRef.current);
+                    savingTimeoutRef.current = setTimeout(() => {
+                      setIsSaving(false);
+                      setSavingStatus('idle');
+                    }, 2000);
+                  } else {
+                    setSavingStatus('error');
+                    if (savingTimeoutRef.current) clearTimeout(savingTimeoutRef.current);
+                    savingTimeoutRef.current = setTimeout(() => {
+                      setIsSaving(false);
+                      setSavingStatus('idle');
+                    }, 3000);
+                  }
+                }}
+                disabled={isSaving}
+                className="px-6 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                💾 Guardar
+              </button>
+
+              <button
+                onClick={async () => {
+                  if (lastSavedJSON.current) {
+                    try {
+                      await discardImageChanges();
+                      const lastSavedData = JSON.parse(lastSavedJSON.current);
+                      setMenuData(JSON.parse(JSON.stringify(lastSavedData.menuData)));
+                      setTheme(lastSavedData.theme);
+
+                      setSelectedBusiness((prev: any) => ({
+                        ...prev,
+                        name: lastSavedData.businessName,
+                      }));
+
+                      setHasUnsavedChanges(false);
+                      window.dispatchEvent(new CustomEvent('discardChanges'));
+
+                      console.log('✅ Cambios descartados');
+                    } catch (error) {
+                      console.error('Error al descartar cambios:', error);
+                      alert('❌ Error al descartar cambios');
+                    }
+                  }
+                }}
+                className="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              >
+                🔄 Descartar
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <PrivateLayout user={user}>
       <div className="space-y-6">
@@ -947,112 +1060,7 @@ export default function DashboardPage() {
         )}
 
         {/* SAVING STATUS BANNER */}
-        {(hasUnsavedChanges || isSaving) && (
-          <div className={`rounded-2xl p-4 transition-all duration-300 border ${
-            savingStatus === 'saving' 
-              ? 'bg-blue-50 border-blue-300 text-blue-900'
-              : savingStatus === 'success'
-              ? 'bg-green-50 border-green-300 text-green-900'
-              : savingStatus === 'error'
-              ? 'bg-red-50 border-red-300 text-red-900'
-              : 'bg-yellow-50 border-yellow-300 text-yellow-900'
-          }`}>
-            {savingStatus === 'saving' && (
-              <div className="flex items-center gap-3 font-semibold justify-center">
-                <div className="animate-spin text-xl">⏳</div>
-                <span>Guardando cambios...</span>
-              </div>
-            )}
-            
-            {savingStatus === 'success' && (
-              <div className="flex items-center gap-3 font-semibold justify-center">
-                <span className="text-xl">✅</span>
-                <span>Cambios guardados</span>
-              </div>
-            )}
-            
-            {savingStatus === 'error' && (
-              <div className="flex items-center gap-3 font-semibold justify-center">
-                <span className="text-xl">❌</span>
-                <span>Error al guardar</span>
-              </div>
-            )}
-            
-            {savingStatus === 'idle' && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 font-semibold justify-center">
-                  <span className="text-lg">⚠️</span>
-                  Cambios sin guardar
-                </div>
-                <div className="flex gap-3 justify-center flex-wrap">
-                  <button
-                    onClick={async () => {
-                      setSavingStatus('saving');
-                      setIsSaving(true);
-                      
-                      const success = await saveMenuToSupabase(token);
-                      if (success) {
-                        await finalizeImageChangesAfterSave();
-                        lastSavedJSON.current = JSON.stringify({
-                          menuData,
-                          theme,
-                          businessName: selectedBusiness.name,
-                        });
-                        setHasUnsavedChanges(false);
-                        setSavingStatus('success');
-                        if (savingTimeoutRef.current) clearTimeout(savingTimeoutRef.current);
-                        savingTimeoutRef.current = setTimeout(() => {
-                          setIsSaving(false);
-                          setSavingStatus('idle');
-                        }, 2000);
-                      } else {
-                        setSavingStatus('error');
-                        if (savingTimeoutRef.current) clearTimeout(savingTimeoutRef.current);
-                        savingTimeoutRef.current = setTimeout(() => {
-                          setIsSaving(false);
-                          setSavingStatus('idle');
-                        }, 3000);
-                      }
-                    }}
-                    disabled={isSaving}
-                    className="px-6 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    💾 Guardar
-                  </button>
-            
-                  <button
-                    onClick={async () => {
-                      if (lastSavedJSON.current) {
-                        try {
-                          await discardImageChanges();
-                          const lastSavedData = JSON.parse(lastSavedJSON.current);
-                          setMenuData(JSON.parse(JSON.stringify(lastSavedData.menuData)));
-                          setTheme(lastSavedData.theme);
-                          
-                          setSelectedBusiness((prev: any) => ({
-                            ...prev,
-                            name: lastSavedData.businessName,
-                          }));
-                          
-                          setHasUnsavedChanges(false);
-                          window.dispatchEvent(new CustomEvent('discardChanges'));
-                          
-                          console.log('✅ Cambios descartados');
-                        } catch (error) {
-                          console.error('Error al descartar cambios:', error);
-                          alert('❌ Error al descartar cambios');
-                        }
-                      }
-                    }}
-                    className="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                  >
-                    🔄 Descartar
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {renderSavingStatusBanner()}
 
         {/* MAIN CONTENT: EDITOR + PREVIEW */}
         {selectedBusiness ? (
@@ -1112,14 +1120,19 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT PANEL: PREVIEW - STICKY */}
-          <div className="sticky top-20 h-fit rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-            <MenuPreview
-              menu={menuData}
-              isDemo={isDemo}
-              businessName={selectedBusiness.name}
-              theme={theme}
-              businessPlan={userPlan as 'menu' | 'ventas'}
-            />
+          <div className="flex flex-col">
+            <div className="sticky top-20 flex flex-col gap-4">
+              <div className="h-fit rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <MenuPreview
+                  menu={menuData}
+                  isDemo={isDemo}
+                  businessName={selectedBusiness.name}
+                  theme={theme}
+                  businessPlan={userPlan as 'menu' | 'ventas'}
+                />
+              </div>
+              {renderSavingStatusBanner()}
+            </div>
           </div>
         </div>
         ) : (
