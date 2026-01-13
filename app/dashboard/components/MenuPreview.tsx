@@ -77,26 +77,7 @@ export default function MenuPreview({
         )}
       </div>
 
-      {/* Botones de descarga con efectos mejorados */}
-      {!isDemo && (
-        <div className="mt-6 flex gap-3 animate-fadeIn">
-          <button
-            onClick={() => handleDownload('png')}
-            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
-          >
-            <Download size={16} /> PNG
-          </button>
-          <button
-            onClick={() => handleDownload('pdf')}
-            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
-          >
-            <Download size={16} /> PDF
-          </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105">
-            <Printer size={16} /> Imprimir
-          </button>
-        </div>
-      )}
+      {/* Se removieron los botones de descarga */}
 
       {/* Modal DEMO */}
       {showDemoModal && (

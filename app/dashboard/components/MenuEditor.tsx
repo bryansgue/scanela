@@ -700,7 +700,7 @@ export default function MenuEditor({
 
       {/* Panel Agregar categoría + Importar menú */}
       <div className="mb-10 space-y-3">
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 md:flex-row">
           <input
             type="text"
             value={newCategoryName}
@@ -711,27 +711,25 @@ export default function MenuEditor({
             placeholder="Ej: Entradas, Platos principales..."
             className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-sm bg-white transition-all duration-300"
           />
-          <button
-            onClick={addCategory}
-            disabled={!newCategoryName.trim()}
-            className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-all duration-300 font-semibold flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
-          >
-            <Plus size={18} /> Categoría
-          </button>
-        </div>
-
-        {/* Botón de importar centrado */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => {
-              // Llamar a la función de importar desde el padre
-              const event = new CustomEvent('importMenu');
-              window.dispatchEvent(event);
-            }}
-            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
-          >
-            📷 Cargar foto del menú (identificación por IA)
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={addCategory}
+              disabled={!newCategoryName.trim()}
+              className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-all duration-300 font-semibold flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
+            >
+              <Plus size={18} /> Categoría
+            </button>
+            <button
+              onClick={() => {
+                // Llamar a la función de importar desde el padre
+                const event = new CustomEvent('importMenu');
+                window.dispatchEvent(event);
+              }}
+              className="px-4 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
+            >
+              📷 Cargar menú
+            </button>
+          </div>
         </div>
       </div>
 
