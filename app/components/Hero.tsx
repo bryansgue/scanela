@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { supabase } from "../lib/supabase/client";
 import MenuDisplay from "./MenuDisplay";
+import { normalizeLogoUrl } from "@/lib/logoUtils";
 
 const bulletPoints = [
   "Actualiza precios y fotos en tiempo real desde cualquier sucursal",
@@ -42,12 +43,6 @@ const chunkBusinesses = (businesses: HeroBusiness[], size: number): HeroBusiness
     chunks.push(businesses.slice(i, i + size));
   }
   return chunks;
-};
-
-const isImageLogo = (logo: string | null) => {
-  if (!logo) return false;
-  const normalized = logo.trim();
-  return /^https?:\/\//i.test(normalized) || normalized.startsWith("data:");
 };
 
 const getBusinessInitials = (name: string) => {
@@ -138,18 +133,27 @@ export default function Hero() {
 
         if (Array.isArray(data.latestBusinesses)) {
           const sanitized: HeroBusiness[] = data.latestBusinesses
-            .map((item: HeroBusiness) => ({
-              id: Number(item.id),
-              name: typeof item.name === "string" ? item.name : "Restaurante",
-              logo: typeof item.logo === "string" ? item.logo : null,
-              created_at:
-                typeof item.created_at === "string"
-                  ? item.created_at
-                  : new Date().toISOString(),
-            }))
+            .map((item: HeroBusiness | null) => {
+              if (!item) return null;
+
+              const normalizedLogo = normalizeLogoUrl(
+                typeof item.logo === "string" ? item.logo : null
+              );
+
+              if (!normalizedLogo) return null;
+
+              return {
+                id: Number(item.id),
+                name: typeof item.name === "string" ? item.name : "Restaurante",
+                logo: normalizedLogo,
+                created_at:
+                  typeof item.created_at === "string"
+                    ? item.created_at
+                    : new Date().toISOString(),
+              } satisfies HeroBusiness;
+            })
             .filter(
-              (business: HeroBusiness) =>
-                typeof business.logo === "string" && business.logo.trim() !== ""
+              (business: HeroBusiness | null): business is HeroBusiness => business !== null
             )
             .slice(0, 10);
 
@@ -436,40 +440,35 @@ export default function Hero() {
                     transition={{ duration: 0.45 }}
                     className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                   >
-                    {currentCarouselGroup.map((business) => {
-                      const trimmedLogo = business.logo?.trim() ?? "";
-                      const showEmojiLogo = trimmedLogo && trimmedLogo.length <= 3 && !isImageLogo(business.logo);
-
-                      return (
-                        <div
-                          key={business.id}
-                          className="flex items-center gap-4 rounded-2xl border border-gray-200/80 bg-white/90 px-4 py-3 shadow-sm"
-                        >
-                          <div className="relative h-14 w-14 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
-                            {isImageLogo(business.logo) ? (
-                              <div
-                                className="h-full w-full"
-                                style={{
-                                  backgroundImage: `url(${business.logo})`,
-                                  backgroundSize: "cover",
-                                  backgroundPosition: "center",
-                                }}
-                                role="img"
-                                aria-label={`Logo de ${business.name}`}
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-2xl text-white">
-                                {showEmojiLogo ? trimmedLogo : getBusinessInitials(business.name)}
-                              </div>
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-gray-900">{business.name}</p>
-                            <p className="text-xs text-gray-500">{getBusinessJoinLabel(business.created_at)}</p>
-                          </div>
+                    {currentCarouselGroup.map((business) => (
+                      <div
+                        key={business.id}
+                        className="flex items-center gap-4 rounded-2xl border border-gray-200/80 bg-white/90 px-4 py-3 shadow-sm"
+                      >
+                        <div className="relative h-14 w-14 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
+                          {business.logo ? (
+                            <div
+                              className="h-full w-full"
+                              style={{
+                                backgroundImage: `url(${business.logo})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                              }}
+                              role="img"
+                              aria-label={`Logo de ${business.name}`}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-white">
+                              {getBusinessInitials(business.name)}
+                            </div>
+                          )}
                         </div>
-                      );
-                    })}
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-gray-900">{business.name}</p>
+                          <p className="text-xs text-gray-500">{getBusinessJoinLabel(business.created_at)}</p>
+                        </div>
+                      </div>
+                    ))}
                   </motion.div>
                 </AnimatePresence>
               )}
