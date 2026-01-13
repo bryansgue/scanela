@@ -81,9 +81,7 @@ export default function MenuEditor({
 
   const themeColors = getThemeColors(theme);
 
-  const [expandedCategory, setExpandedCategory] = useState<number | null>(
-    menu.categories && menu.categories.length > 0 ? menu.categories[0].id : null
-  );
+  const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
   const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set()); // "categoryId-productId"
   const [newCategoryName, setNewCategoryName] = useState('');
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
