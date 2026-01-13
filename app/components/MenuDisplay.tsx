@@ -13,6 +13,8 @@ export default function MenuDisplay({
   templateIcon, // Icono de la plantilla (para landing)
   templateName, // Nombre de la plantilla (para landing)
   templateSubtitle, // Subtítulo de la plantilla (para landing)
+  autoSelectFirstSize = false,
+  autoSelectVariantOrder,
 }: {
   menu: any;
   businessName: string;
@@ -23,6 +25,8 @@ export default function MenuDisplay({
   templateIcon?: string;
   templateName?: string;
   templateSubtitle?: string;
+  autoSelectFirstSize?: boolean;
+  autoSelectVariantOrder?: number[];
 }) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<{ [key: number]: number | null }>({});
@@ -35,6 +39,52 @@ export default function MenuDisplay({
       setSelectedCategoryId(menu.categories[0].id);
     }
   }, [menu.categories, selectedCategoryId]);
+
+  useEffect(() => {
+    if ((!autoSelectFirstSize && !autoSelectVariantOrder?.length) || !menu.categories) {
+      return;
+    }
+
+    setSelectedSizes((prev) => {
+      const updated = { ...prev };
+      let hasChanges = false;
+      let variantProductIndex = 0;
+
+      menu.categories.forEach((category: any) => {
+        category.products?.forEach((product: any) => {
+          if (
+            product.hasVariants &&
+            product.variants?.sizes &&
+            product.variants.sizes.length > 0 &&
+            (updated[product.id] === undefined || updated[product.id] === null)
+          ) {
+            let desiredSizeId: number | undefined;
+
+            if (autoSelectVariantOrder?.length) {
+              const desiredIndex = autoSelectVariantOrder[variantProductIndex];
+              if (desiredIndex !== undefined) {
+                const clampedIndex = Math.min(Math.max(desiredIndex, 0), product.variants.sizes.length - 1);
+                desiredSizeId = product.variants.sizes[clampedIndex]?.id;
+              }
+            }
+
+            if (!desiredSizeId && autoSelectFirstSize) {
+              desiredSizeId = product.variants.sizes[0].id;
+            }
+
+            if (desiredSizeId) {
+              updated[product.id] = desiredSizeId;
+              hasChanges = true;
+            }
+
+            variantProductIndex += 1;
+          }
+        });
+      });
+
+      return hasChanges ? updated : prev;
+    });
+  }, [autoSelectFirstSize, autoSelectVariantOrder, menu.categories]);
 
   const getThemeColors = (t: string) => {
     const themes: Record<string, { header: string; light: string; text: string; btn: string; border: string; gradientRgba: string }> = {
