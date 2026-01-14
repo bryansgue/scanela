@@ -103,40 +103,6 @@ export default function PaymentGatewaysSection() {
           </div>
         </div>
 
-        {/* HOW IT WORKS */}
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold mb-8 text-center">¿Cómo funciona?</h3>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 items-center">
-            <FlowStep
-              number="1"
-              title="Cliente ve el menú"
-              description="Accede a tu menú por QR o enlace"
-              icon="📱"
-            />
-            <Arrow />
-            <FlowStep
-              number="2"
-              title="Selecciona productos"
-              description="Agrega items al carrito"
-              icon="🛒"
-            />
-            <Arrow />
-            <FlowStep
-              number="3"
-              title="Realiza el pago"
-              description="Paga de forma segura"
-              icon="💳"
-            />
-            <Arrow />
-            <FlowStep
-              number="4"
-              title="Tú recibes dinero"
-              description="Directamente a tu cuenta"
-              icon="✅"
-            />
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -209,37 +175,6 @@ function SecurityFeature({
       <div className="flex justify-center mb-4">{icon}</div>
       <h4 className="font-bold text-gray-900 mb-2">{title}</h4>
       <p className="text-sm text-gray-600">{description}</p>
-    </div>
-  );
-}
-
-function FlowStep({
-  number,
-  title,
-  description,
-  icon,
-}: {
-  number: string;
-  title: string;
-  description: string;
-  icon: string;
-}) {
-  return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 text-center">
-      <div className="text-4xl mb-3 text-center">{icon}</div>
-      <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mx-auto mb-4">
-        {number}
-      </div>
-      <h4 className="font-bold text-gray-900 mb-2">{title}</h4>
-      <p className="text-xs text-gray-600">{description}</p>
-    </div>
-  );
-}
-
-function Arrow() {
-  return (
-    <div className="flex items-center justify-center">
-      <span className="text-2xl text-gray-400">→</span>
     </div>
   );
 }

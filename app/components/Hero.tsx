@@ -13,13 +13,6 @@ const bulletPoints = [
   "Recibe pagos, comentarios y métricas sin depender de papel ni diseños externos",
 ];
 
-const featureHighlights = [
-  { title: "Menú digital", description: "Totalmente editable y listo en móvil" },
-  { title: "QR ilimitados", description: "Un código por mesa, sucursal o delivery" },
-  { title: "Pagos y pedidos", description: "Carrito con checkout integrado" },
-  { title: "Reportes diarios", description: "Ventas, tickets promedio y favoritos" },
-];
-
 const featuredTemplateMeta = {
   theme: "orange",
   templateIcon: "🍕",
@@ -32,17 +25,27 @@ type HeroBusiness = {
   name: string;
   logo: string | null;
   created_at: string;
+  country_code?: string | null;
 };
 
-const CAROUSEL_GROUP_SIZE = 4;
+const HERO_RECENT_BUSINESS_LIMIT = 10;
+const DEFAULT_COUNTRY_FLAG = "🇪🇨";
 
-const chunkBusinesses = (businesses: HeroBusiness[], size: number): HeroBusiness[][] => {
-  if (size <= 0) return [];
-  const chunks: HeroBusiness[][] = [];
-  for (let i = 0; i < businesses.length; i += size) {
-    chunks.push(businesses.slice(i, i + size));
+const buildMarqueeBusinesses = (businesses: HeroBusiness[], minimum: number): HeroBusiness[] => {
+  if (!businesses.length) return [];
+
+  const base: HeroBusiness[] = [...businesses];
+
+  if (base.length >= minimum) {
+    return [...base, ...base];
   }
-  return chunks;
+
+  while (base.length < minimum) {
+    const remaining = minimum - base.length;
+    base.push(...businesses.slice(0, remaining));
+  }
+
+  return [...base, ...base];
 };
 
 const getBusinessInitials = (name: string) => {
@@ -70,6 +73,27 @@ const getBusinessJoinLabel = (dateString: string) => {
   return `Desde ${date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}`;
 };
 
+const getBusinessFlag = (countryCode?: string | null) => {
+  if (!countryCode) return DEFAULT_COUNTRY_FLAG;
+
+  const normalized = countryCode.trim().toUpperCase();
+
+  switch (normalized) {
+    case "PE":
+      return "🇵🇪";
+    case "CO":
+      return "🇨🇴";
+    case "AR":
+      return "🇦🇷";
+    case "CL":
+      return "🇨🇱";
+    case "MX":
+      return "🇲🇽";
+    default:
+      return DEFAULT_COUNTRY_FLAG;
+  }
+};
+
 const isAbortError = (error: unknown): error is Error =>
   error instanceof Error && error.name === "AbortError";
 
@@ -84,7 +108,6 @@ export default function Hero() {
   const [activeBusinessesCount, setActiveBusinessesCount] = useState<number | null>(null);
   const [recentBusinesses, setRecentBusinesses] = useState<HeroBusiness[]>([]);
   const [metricsLoading, setMetricsLoading] = useState(true);
-  const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -150,12 +173,16 @@ export default function Hero() {
                   typeof item.created_at === "string"
                     ? item.created_at
                     : new Date().toISOString(),
+                country_code:
+                  typeof (item as { country_code?: string })?.country_code === "string"
+                    ? (item as { country_code?: string }).country_code
+                    : null,
               } satisfies HeroBusiness;
             })
             .filter(
               (business: HeroBusiness | null): business is HeroBusiness => business !== null
             )
-            .slice(0, 10);
+            .slice(0, HERO_RECENT_BUSINESS_LIMIT);
 
           setRecentBusinesses(sanitized);
         }
@@ -175,25 +202,15 @@ export default function Hero() {
     return () => controller.abort();
   }, []);
 
-  const carouselGroups = useMemo(() => {
+  const marqueeBusinesses = useMemo(() => {
     if (!recentBusinesses.length) return [];
-    const size = Math.min(CAROUSEL_GROUP_SIZE, Math.max(1, recentBusinesses.length));
-    return chunkBusinesses(recentBusinesses, size);
+    return buildMarqueeBusinesses(recentBusinesses, HERO_RECENT_BUSINESS_LIMIT);
   }, [recentBusinesses]);
 
-  useEffect(() => {
-    setCarouselIndex(0);
-  }, [carouselGroups.length]);
-
-  useEffect(() => {
-    if (carouselGroups.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % carouselGroups.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [carouselGroups.length]);
+  const marqueeDuration = useMemo(() => {
+    const uniqueCount = marqueeBusinesses.length / 2 || 1;
+    return Math.max(18, uniqueCount * 2.8);
+  }, [marqueeBusinesses.length]);
 
   const heroStats = useMemo(
     () => [
@@ -211,8 +228,6 @@ export default function Hero() {
     ],
     [activeBusinessesCount, metricsLoading]
   );
-
-  const currentCarouselGroup = carouselGroups[carouselIndex] ?? [];
 
   const primaryCta = {
     href: user ? "/dashboard" : "/register",
@@ -400,29 +415,23 @@ export default function Hero() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.7 }}
-            className="mt-14 rounded-3xl border border-gray-200/70 bg-white/80 p-6 shadow-lg"
+            className="mt-14"
           >
-            <div className="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">Clientes recientes</p>
-                <p className="text-lg font-semibold text-gray-900">Últimos en activar su menú con logo</p>
-              </div>
-              <p className="text-sm text-gray-500">
-                {recentBusinesses.length > 0
-                  ? `Mostrando ${Math.min(recentBusinesses.length, 10)} negocios con logo`
-                  : "Estamos buscando nuevos logos..."}
-              </p>
-            </div>
+            <div className="relative left-1/2 w-screen -translate-x-1/2 px-4 sm:px-10">
+              <div className="mx-auto max-w-6xl">
+                <div className="flex flex-col items-center gap-1.5 pb-2 text-center">
+                  <p className="text-lg font-semibold text-gray-900">Negocios recientes</p>
+                </div>
 
-            <div className="relative min-h-[150px]">
+                <div className="relative min-h-[100px] sm:min-h-[110px]">
               {metricsLoading && recentBusinesses.length === 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {Array.from({ length: 4 }).map((_, idx) => (
                     <div
                       key={`skeleton-${idx}`}
-                      className="flex animate-pulse items-center gap-4 rounded-2xl border border-gray-200/60 bg-white/60 px-4 py-3"
+                      className="flex animate-pulse items-center gap-3 rounded-2xl border border-gray-200/60 bg-white/60 px-3.5 py-2"
                     >
-                      <div className="h-14 w-14 rounded-full bg-gradient-to-br from-slate-200 to-slate-100" />
+                      <div className="h-11 w-11 rounded-full bg-gradient-to-br from-slate-200 to-slate-100" />
                       <div className="flex-1 space-y-2">
                         <div className="h-3 w-3/4 rounded-full bg-slate-200" />
                         <div className="h-3 w-1/2 rounded-full bg-slate-100" />
@@ -430,22 +439,27 @@ export default function Hero() {
                     </div>
                   ))}
                 </div>
+              ) : recentBusinesses.length === 0 ? (
+                <div className="flex h-32 flex-col items-center justify-center text-center text-sm text-gray-500">
+                  <p>Aún no hay clientes con logos cargados.</p>
+                  <p className="text-xs text-gray-400">Vuelve pronto para ver nuevas activaciones.</p>
+                </div>
               ) : (
-                <AnimatePresence mode="wait">
+                <div className="relative overflow-hidden rounded-2xl border border-white/50 bg-white/40 px-3.5 py-2.5 backdrop-blur">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 w-18 bg-gradient-to-r from-white to-transparent" />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 w-18 bg-gradient-to-l from-white to-transparent" />
+
                   <motion.div
-                    key={carouselIndex}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.45 }}
-                    className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                    className="flex w-max min-w-full items-center gap-3.5 py-1"
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{ duration: marqueeDuration, ease: "linear", repeat: Infinity }}
                   >
-                    {currentCarouselGroup.map((business) => (
+                    {marqueeBusinesses.map((business, idx) => (
                       <div
-                        key={business.id}
-                        className="flex items-center gap-4 rounded-2xl border border-gray-200/80 bg-white/90 px-4 py-3 shadow-sm"
+                        key={`marquee-business-${business.id}-${idx}`}
+                        className="flex min-w-[200px] items-center gap-3 rounded-2xl border border-gray-200/80 bg-white/90 px-3.5 py-2 shadow-sm"
                       >
-                        <div className="relative h-14 w-14 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
+                        <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
                           {business.logo ? (
                             <div
                               className="h-full w-full"
@@ -465,47 +479,24 @@ export default function Hero() {
                         </div>
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold text-gray-900">{business.name}</p>
-                          <p className="text-xs text-gray-500">{getBusinessJoinLabel(business.created_at)}</p>
+                          <div className="flex items-center gap-1 text-[11px] text-gray-500">
+                            <span className="text-sm" role="img" aria-label="País del negocio">
+                              {getBusinessFlag(business.country_code)}
+                            </span>
+                            <span>{getBusinessJoinLabel(business.created_at)}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </motion.div>
-                </AnimatePresence>
+                </div>
               )}
-            </div>
-
-            {carouselGroups.length > 1 && (
-              <div className="mt-5 flex justify-center gap-2">
-                {carouselGroups.map((_, idx) => (
-                  <button
-                    key={`carousel-dot-${idx}`}
-                    type="button"
-                    onClick={() => setCarouselIndex(idx)}
-                    className={`h-2.5 w-2.5 rounded-full transition ${
-                      idx === carouselIndex ? "bg-blue-600" : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Mostrar grupo ${idx + 1} de clientes recientes`}
-                  />
-                ))}
+                </div>
               </div>
-            )}
+            </div>
           </motion.div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1, duration: 0.7 }}
-          className="mt-20 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {featureHighlights.map((feature) => (
-            <div key={feature.title} className="rounded-2xl border border-gray-200/70 bg-white/70 p-5 shadow-sm">
-              <p className="text-base font-semibold text-gray-900">{feature.title}</p>
-              <p className="mt-2 text-sm text-gray-600">{feature.description}</p>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );
