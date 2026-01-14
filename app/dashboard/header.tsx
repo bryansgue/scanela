@@ -57,7 +57,7 @@ export default function PrivateHeader() {
                 bg-clip-text text-transparent
               "
             >
-              Syncuenta
+              Scanela
             </span>
           </Link>
 

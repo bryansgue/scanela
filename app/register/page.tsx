@@ -79,7 +79,7 @@ export default function RegisterPage() {
               text-transparent bg-clip-text
             "
           >
-            Syncuenta
+            Scanela
           </span>
         </h1>
 

@@ -6,7 +6,7 @@ export default function ProfileSettings() {
   return (
     <Section title="Perfil">
       <p className="text-gray-600 mb-4">
-        Actualiza tu nombre y correo asociado a Syncuenta.
+  Actualiza tu nombre y correo asociado a Scanela.
       </p>
 
       <div className="flex flex-col gap-4 max-w-md">

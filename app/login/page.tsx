@@ -59,7 +59,7 @@ export default function LoginPage() {
         "
       >
         <h1 className="text-3xl font-extrabold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Syncuenta
+          Scanela
         </h1>
 
         <p className="text-center text-gray-600 mb-8">

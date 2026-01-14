@@ -240,12 +240,12 @@ export default function Hero() {
   };
 
   return (
-  <section className="relative overflow-hidden bg-gradient-to-b from-white via-blue-50/40 to-white pt-16 pb-24">
+  <section className="relative overflow-hidden bg-gradient-to-b from-white via-blue-50/40 to-white pt-12 pb-16 sm:pt-16 sm:pb-24">
       <div className="absolute inset-x-0 -top-32 h-72 bg-gradient-to-r from-blue-500/5 via-purple-500/10 to-pink-500/5 blur-3xl" />
       <div className="absolute -bottom-24 left-1/2 h-72 w-[70%] -translate-x-1/2 rounded-full bg-purple-200/20 blur-[120px]" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
-        <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -260,7 +260,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.8 }}
-              className="mt-5 text-4xl font-bold leading-tight text-gray-900 md:text-6xl"
+              className="mt-5 text-3xl font-bold leading-tight text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
             >
               Crea menús digitales elegantes
               <br />
@@ -273,7 +273,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.8 }}
-              className="mt-4 text-base text-gray-600"
+              className="mt-4 text-base text-gray-600 sm:text-lg"
             >
               Controla productos, fotos, precios y pagos desde cualquier sucursal con un único QR.
             </motion.p>
@@ -282,7 +282,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35, duration: 0.8 }}
-              className="mt-5 space-y-3 text-sm text-gray-700"
+              className="mt-5 space-y-3 text-sm text-gray-700 sm:text-base"
             >
               {bulletPoints.map((point) => (
                 <li key={point} className="flex items-start gap-3">
@@ -292,7 +292,7 @@ export default function Hero() {
               ))}
             </motion.ul>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex w-full flex-col gap-4 sm:flex-row sm:flex-wrap">
               <AnimatePresence mode="wait">
                 {!loading && (
                   <motion.div
@@ -304,7 +304,7 @@ export default function Hero() {
                   >
                     <Link
                       href={primaryCta.href}
-                      className="inline-flex min-w-[190px] items-center justify-center rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
+                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl sm:w-auto"
                     >
                       {primaryCta.label}
                     </Link>
@@ -315,7 +315,7 @@ export default function Hero() {
                     key="primary-placeholder"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0 }}
-                    className="min-w-[190px] rounded-2xl bg-gray-200/70 px-8 py-4"
+                    className="w-full min-w-[190px] rounded-2xl bg-gray-200/70 px-8 py-4 sm:w-auto"
                   />
                 )}
               </AnimatePresence>
@@ -331,7 +331,7 @@ export default function Hero() {
                   >
                     <Link
                       href={secondaryCta.href}
-                      className="inline-flex min-w-[190px] items-center justify-center rounded-2xl border border-gray-300 bg-white px-8 py-4 text-lg font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50"
+                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl border border-gray-300 bg-white px-8 py-4 text-lg font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50 sm:w-auto"
                     >
                       {secondaryCta.label}
                     </Link>
@@ -342,7 +342,7 @@ export default function Hero() {
                     key="secondary-placeholder"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0 }}
-                    className="min-w-[190px] rounded-2xl border border-gray-200 px-8 py-4"
+                    className="w-full min-w-[190px] rounded-2xl border border-gray-200 px-8 py-4 sm:w-auto"
                   />
                 )}
               </AnimatePresence>
@@ -352,10 +352,13 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.8 }}
-              className="mt-12 grid gap-6 text-left sm:grid-cols-3"
+              className="mt-10 grid gap-4 text-left sm:grid-cols-3 lg:gap-6"
             >
               {heroStats.map((stat) => (
-                <div key={stat.label} className="rounded-2xl border border-gray-200/80 bg-white/70 px-5 py-4 shadow-sm">
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border border-gray-200/80 bg-white/70 px-5 py-4 shadow-sm"
+                >
                   <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
                   <p className="text-sm uppercase tracking-wide text-gray-500">{stat.label}</p>
                 </div>
@@ -367,11 +370,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="relative mx-auto flex w-full max-w-md justify-center"
+            className="relative mx-auto flex w-full max-w-sm justify-center md:max-w-md"
           >
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-500/20 via-purple-500/15 to-pink-500/20 blur-3xl" />
             <div className="pointer-events-none select-none">
-              <div className="relative rounded-[48px] border-[6px] border-black bg-black/95 p-2 shadow-[0_30px_120px_rgba(15,23,42,0.45)]" style={{ width: 390, height: 780 }}>
+              <div
+                className="relative rounded-[48px] border-[6px] border-black bg-black/95 p-2 shadow-[0_30px_120px_rgba(15,23,42,0.45)]"
+                style={{ width: "min(360px, 90vw)", height: "min(720px, 180vw)" }}
+              >
                 <div className="absolute left-1/2 top-2 h-7 w-32 -translate-x-1/2 rounded-b-2xl bg-black" />
                 <div className="h-full overflow-hidden rounded-[36px] bg-white relative">
                   {!templateLoading && featuredTemplate ? (
@@ -401,11 +407,16 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="pointer-events-none absolute -bottom-12 left-1/2 -translate-x-1/2 rounded-2xl border border-gray-200 bg-white/80 px-6 py-4 text-center shadow-lg backdrop-blur"
+              className="pointer-events-none absolute -bottom-12 left-1/2 hidden -translate-x-1/2 rounded-2xl border border-gray-200 bg-white/80 px-6 py-4 text-center shadow-lg backdrop-blur sm:block"
             >
               <p className="text-sm font-semibold text-gray-900">Plantilla interactiva en vivo</p>
               <p className="text-xs text-gray-500">Puedes cambiar colores, fotos y precios en segundos.</p>
             </motion.div>
+
+            <div className="mt-4 w-full rounded-2xl border border-gray-200 bg-white/80 px-4 py-3 text-center text-sm text-gray-900 shadow-sm sm:hidden">
+              <p className="font-semibold">Plantilla interactiva en vivo</p>
+              <p className="text-xs text-gray-500">Puedes cambiar colores, fotos y precios en segundos.</p>
+            </div>
           </motion.div>
         </div>
 
@@ -417,13 +428,13 @@ export default function Hero() {
             transition={{ delay: 0.15, duration: 0.7 }}
             className="mt-14"
           >
-            <div className="relative left-1/2 w-screen -translate-x-1/2 px-4 sm:px-10">
+            <div className="relative left-1/2 w-screen -translate-x-1/2 px-3 sm:px-8 lg:px-10">
               <div className="mx-auto max-w-6xl">
                 <div className="flex flex-col items-center gap-1.5 pb-2 text-center">
                   <p className="text-lg font-semibold text-gray-900">Negocios recientes</p>
                 </div>
 
-                <div className="relative min-h-[100px] sm:min-h-[110px]">
+                <div className="relative min-h-[90px] sm:min-h-[110px]">
               {metricsLoading && recentBusinesses.length === 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {Array.from({ length: 4 }).map((_, idx) => (
@@ -445,19 +456,19 @@ export default function Hero() {
                   <p className="text-xs text-gray-400">Vuelve pronto para ver nuevas activaciones.</p>
                 </div>
               ) : (
-                <div className="relative overflow-hidden rounded-2xl border border-white/50 bg-white/40 px-3.5 py-2.5 backdrop-blur">
+                <div className="relative overflow-hidden rounded-2xl border border-white/50 bg-white/60 px-2.5 py-2 backdrop-blur">
                   <div className="pointer-events-none absolute inset-y-0 left-0 w-18 bg-gradient-to-r from-white to-transparent" />
                   <div className="pointer-events-none absolute inset-y-0 right-0 w-18 bg-gradient-to-l from-white to-transparent" />
 
                   <motion.div
-                    className="flex w-max min-w-full items-center gap-3.5 py-1"
+                    className="flex w-max min-w-full items-center gap-3 py-1"
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{ duration: marqueeDuration, ease: "linear", repeat: Infinity }}
                   >
                     {marqueeBusinesses.map((business, idx) => (
                       <div
                         key={`marquee-business-${business.id}-${idx}`}
-                        className="flex min-w-[200px] items-center gap-3 rounded-2xl border border-gray-200/80 bg-white/90 px-3.5 py-2 shadow-sm"
+                        className="flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border border-gray-200/80 bg-white/90 px-3 py-2 shadow-sm"
                       >
                         <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
                           {business.logo ? (

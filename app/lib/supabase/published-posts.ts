@@ -28,14 +28,14 @@ export function simulatePublishUrls(networks: string[]): Record<string, string> 
         urls[network] = `https://instagram.com/p/${randomId}`;
         break;
       case 'tiktok':
-        urls[network] = `https://tiktok.com/@syncuenta/video/${randomId}`;
+        urls[network] = `https://tiktok.com/@scanela/video/${randomId}`;
         break;
       case 'x':
       case 'twitter':
-        urls[network] = `https://x.com/syncuenta/status/${randomId}`;
+        urls[network] = `https://x.com/scanela/status/${randomId}`;
         break;
       case 'facebook':
-        urls[network] = `https://facebook.com/syncuenta/posts/${randomId}`;
+        urls[network] = `https://facebook.com/scanela/posts/${randomId}`;
         break;
       case 'linkedin':
         urls[network] = `https://linkedin.com/feed/update/urn:li:activity:${randomId}`;
@@ -47,13 +47,13 @@ export function simulatePublishUrls(networks: string[]): Record<string, string> 
         urls[network] = `https://pinterest.com/pin/${randomId}`;
         break;
       case 'reddit':
-        urls[network] = `https://reddit.com/r/syncuenta/comments/${randomId}`;
+        urls[network] = `https://reddit.com/r/scanela/comments/${randomId}`;
         break;
       case 'threads':
-        urls[network] = `https://threads.net/@syncuenta/posts/${randomId}`;
+        urls[network] = `https://threads.net/@scanela/posts/${randomId}`;
         break;
       case 'bluesky':
-        urls[network] = `https://bsky.app/profile/syncuenta.bsky.social/post/${randomId}`;
+        urls[network] = `https://bsky.app/profile/scanela.bsky.social/post/${randomId}`;
         break;
       default:
         urls[network] = `https://${network}.com/post/${randomId}`;
