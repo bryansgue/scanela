@@ -201,7 +201,7 @@ export default function VariantPanel({
                       if (/^\d*[.,]?\d*$/.test(input)) {
                         // Reemplazar , por . y luego parsear
                         const normalized = input.replace(',', '.');
-                        let value = parseFloat(normalized);
+                        const value = parseFloat(normalized);
                         if (!isNaN(value) && value >= 0) {
                           updateSizePrice(size.id, value);
                         }

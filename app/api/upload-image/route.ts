@@ -168,8 +168,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { imageUrl, businessId, storagePath } = await request.json();
-    let resolvedPath = storagePath || (imageUrl ? extractStoragePathFromUrl(imageUrl) : null);
+  const { imageUrl, businessId, storagePath } = await request.json();
+  const resolvedPath = storagePath || (imageUrl ? extractStoragePathFromUrl(imageUrl) : null);
 
     if (!resolvedPath) {
       return NextResponse.json(

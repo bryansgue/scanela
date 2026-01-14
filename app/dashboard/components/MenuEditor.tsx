@@ -1001,7 +1001,7 @@ export default function MenuEditor({
                                       } else {
                                         // Reemplazar , por . para normalizar
                                         const normalized = input.replace(',', '.');
-                                        let value = parseFloat(normalized);
+                                        const value = parseFloat(normalized);
                                         // Solo actualizar si es un número válido y positivo
                                         if (!isNaN(value) && value >= 0 && normalized.match(/^\d+\.?\d*$/)) {
                                           updateProductEditState(category.id, product.id, 'price', value);

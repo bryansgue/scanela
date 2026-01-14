@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, memo } from "react";
+import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
 import { Profile } from "../../../types/Profile";
 import ProfileCard from "./ProfileCard";
@@ -76,9 +77,12 @@ function ProfileSidebarComponent({
               <p className="text-xs text-amber-700 mt-1">
                 Has alcanzado el límite de {profileLimit} perfiles en tu plan
               </p>
-              <a href="/settings" className="text-xs font-semibold text-amber-600 hover:text-amber-700 mt-2 inline-block">
+              <Link
+                href="/settings"
+                className="text-xs font-semibold text-amber-600 hover:text-amber-700 mt-2 inline-block"
+              >
                 Mejorar plan →
-              </a>
+              </Link>
             </div>
           </div>
         ) : loadingPlan ? (
