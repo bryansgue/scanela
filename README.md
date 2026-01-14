@@ -66,6 +66,13 @@ STRIPE_PRICE_VENTAS_ANNUAL=
 - `npm run inspect:supabase`: imprime datos clave de Supabase (negocios, menús, órdenes y suscripciones) usando tu `.env.local`.
 - Revisa `STRIPE_SETUP.md` para pasos detallados de configuración de claves y webhooks.
 
+## SEO configurable
+
+- Edita `lib/seoConfig.ts` para definir el título por defecto, la descripción, las palabras clave, el template para las páginas y la imagen Open Graph (`public/og-default.svg`).
+- Cuando necesites un mensaje distinto para una página específica, importa el objeto y sobrescribe los campos en el archivo de página usando `generateMetadata`.
+- Cambia `siteUrl` por tu dominio real antes de desplegar para que las etiquetas canonical y Open Graph apunten a la URL correcta.
+- Puedes reemplazar `public/og-default.svg` por cualquier imagen 1200x630 px; solo mantén la ruta actualizada en el archivo de configuración.
+
 ## Licencia
 
 Privado

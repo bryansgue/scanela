@@ -45,24 +45,26 @@ export default function PublicHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-gray-200/60 bg-white/85 py-4 backdrop-blur-xl sm:py-5">
-      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-30 w-full backdrop-blur-xl">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/95 via-[#020b1c]/90 to-transparent" />
+      <div className="absolute inset-x-4 top-0 mx-auto h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5">
 
         {/* LOGO */}
         <h1
           className="
             text-3xl font-extrabold bg-gradient-to-r 
-            from-blue-600 to-purple-600 bg-clip-text text-transparent
-            cursor-pointer
+            from-cyan-300 via-sky-400 to-blue-500 bg-clip-text text-transparent
+            cursor-pointer drop-shadow-[0_10px_30px_rgba(59,130,246,0.35)]
           "
         >
           <Link href="/">Scanela</Link>
         </h1>
 
         {/* DESKTOP NAV */}
-        <nav className="hidden items-center gap-6 text-gray-700 font-medium md:flex">
+        <nav className="hidden items-center gap-6 font-medium text-white/70 md:flex">
           {navigationLinks.map((link) => (
-            <a key={link.href} href={link.href} className="transition hover:text-blue-600">
+            <a key={link.href} href={link.href} className="transition hover:text-white">
               {link.label}
             </a>
           ))}
@@ -72,13 +74,13 @@ export default function PublicHeader() {
               <div className="flex items-center gap-4">
                 <Link
                   href="/dashboard"
-                  className="rounded-xl bg-green-600 px-5 py-2 text-white shadow hover:bg-green-700 transition"
+                  className="rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-500 px-5 py-2 text-slate-900 shadow-lg shadow-emerald-500/30 transition hover:shadow-xl"
                 >
                   Dashboard
                 </Link>
                 <button
                   onClick={logout}
-                  className="rounded-lg p-2 text-red-600 transition hover:bg-gray-200"
+                  className="rounded-xl border border-white/20 p-2 text-white/70 transition hover:bg-white/10"
                   title="Cerrar sesión"
                 >
                   <LogOut size={20} />
@@ -88,13 +90,13 @@ export default function PublicHeader() {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 font-semibold text-blue-600 transition hover:text-blue-700"
+                  className="px-4 py-2 font-semibold text-white/80 transition hover:text-white"
                 >
                   Iniciar sesión
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-xl bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700 transition"
+                  className="rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-2 text-slate-900 shadow-lg shadow-cyan-500/30 transition hover:shadow-xl"
                 >
                   Crear cuenta
                 </Link>
@@ -107,7 +109,7 @@ export default function PublicHeader() {
         <button
           type="button"
           onClick={() => setIsMenuOpen((prev) => !prev)}
-          className="rounded-xl border border-gray-200 bg-white/80 p-2 text-gray-700 shadow-sm transition hover:border-blue-200 hover:text-blue-600 md:hidden"
+          className="rounded-2xl border border-white/20 bg-white/10 p-2 text-white/80 shadow-sm transition hover:border-cyan-300 hover:text-white md:hidden"
           aria-label="Abrir menú"
           aria-expanded={isMenuOpen}
         >
@@ -116,17 +118,17 @@ export default function PublicHeader() {
 
         {/* MOBILE NAV PANEL */}
         <div
-          className={`absolute left-0 right-0 top-full origin-top rounded-b-3xl border border-t border-gray-200/70 bg-white px-4 py-5 shadow-xl transition duration-200 md:hidden ${
+          className={`absolute left-0 right-0 top-full origin-top rounded-b-3xl border border-white/15 bg-[#040d1f]/95 px-4 py-5 text-white shadow-2xl shadow-cyan-500/10 backdrop-blur transition duration-200 md:hidden ${
             isMenuOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
           }`}
         >
-          <nav className="flex flex-col gap-4 text-base font-semibold text-gray-800">
+          <nav className="flex flex-col gap-4 text-base font-semibold">
             {navigationLinks.map((link) => (
               <a
                 key={`mobile-${link.href}`}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="rounded-2xl px-3 py-3 transition hover:bg-gray-100"
+                className="rounded-2xl px-3 py-3 transition hover:bg-white/10"
               >
                 {link.label}
               </a>
@@ -138,13 +140,13 @@ export default function PublicHeader() {
                   <Link
                     href="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="rounded-2xl bg-green-600 px-4 py-3 text-center text-white shadow-lg shadow-green-600/30 transition hover:bg-green-700"
+                    className="rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-500 px-4 py-3 text-center text-slate-900 shadow-lg shadow-emerald-500/30 transition hover:shadow-xl"
                   >
                     Ir al Dashboard
                   </Link>
                   <button
                     onClick={logout}
-                    className="rounded-2xl border border-red-200 px-4 py-3 text-center font-semibold text-red-600 transition hover:bg-red-50"
+                    className="rounded-2xl border border-white/10 px-4 py-3 text-center font-semibold text-white/80 transition hover:bg-white/10"
                   >
                     Cerrar sesión
                   </button>
@@ -154,14 +156,14 @@ export default function PublicHeader() {
                   <Link
                     href="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="rounded-2xl border border-blue-200 px-4 py-3 text-center font-semibold text-blue-700 transition hover:bg-blue-50"
+                    className="rounded-2xl border border-white/15 px-4 py-3 text-center font-semibold text-white/80 transition hover:bg-white/10"
                   >
                     Iniciar sesión
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setIsMenuOpen(false)}
-                    className="rounded-2xl bg-blue-600 px-4 py-3 text-center font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700"
+                    className="rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3 text-center font-semibold text-slate-900 shadow-lg shadow-cyan-500/30 transition hover:shadow-xl"
                   >
                     Crear cuenta
                   </Link>
@@ -169,8 +171,8 @@ export default function PublicHeader() {
               )
             ) : (
               <div className="space-y-2">
-                <div className="h-10 animate-pulse rounded-2xl bg-gray-100" />
-                <div className="h-10 animate-pulse rounded-2xl bg-gray-100" />
+                <div className="h-10 animate-pulse rounded-2xl bg-white/10" />
+                <div className="h-10 animate-pulse rounded-2xl bg-white/10" />
               </div>
             )}
           </nav>

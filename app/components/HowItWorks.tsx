@@ -1,87 +1,69 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { UserPlus, Layers, Share2, Send, Clock } from "lucide-react";
+import { UserPlus, Layers, Palette, Send } from "lucide-react";
 
-interface StepIconProps {
-  title: string;
-  text: string;
-  icon: React.ReactNode;
-}
+const steps = [
+  {
+    title: "Crea tu cuenta",
+    text: "Registra tu restaurante y accede al panel en segundos.",
+    icon: <UserPlus size={32} />, 
+    accent: "from-blue-500/20 to-blue-500/5",
+  },
+  {
+    title: "Diseña tu menú",
+    text: "Agrega categorías, precios, fotos y variantes con nuestro editor.",
+    icon: <Layers size={32} />, 
+    accent: "from-purple-500/20 to-purple-500/5",
+  },
+  {
+    title: "Personaliza la marca",
+    text: "Elige plantillas, tipografías y QR que combinan con tu identidad.",
+    icon: <Palette size={32} />, 
+    accent: "from-pink-500/20 to-pink-500/5",
+  },
+  {
+    title: "Comparte y cobra",
+    text: "Publica tu código QR, recibe pedidos y pagos en tiempo real.",
+    icon: <Send size={32} />, 
+    accent: "from-emerald-500/20 to-emerald-500/5",
+  },
+];
 
 export default function HowItWorks() {
   return (
-    <section id="how" className="py-28 bg-white border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 text-center">
+    <section id="how" className="relative overflow-hidden border-t border-white/10 bg-gradient-to-b from-white to-blue-50 py-28">
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-blue-200/40 to-transparent" />
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.6em] text-blue-500">FLUJO COMPLETO</p>
+          <h3 className="mt-4 text-4xl font-black text-slate-900">¿Cómo funciona Scanela?</h3>
+          <p className="mt-4 text-lg text-slate-600">
+            Crea, personaliza y comparte tu menú digital con QR en cuatro pasos.
+          </p>
+        </div>
 
-        <h3 className="text-5xl font-extrabold mb-10">
-          ¿Cómo funciona Scanela?
-        </h3>
-
-        <p className="text-xl text-gray-600 mx-auto mb-16">
-          Cuatro pasos simples para crear y compartir tu menú digital.
-        </p>
-
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-6">
-
-          <StepIcon
-            title="Crea tu cuenta"
-            text="Accede a tu panel central."
-            icon={<UserPlus size={40} strokeWidth={1.5} className="text-blue-600" />}
-          />
-
-          <Arrow />
-
-          <StepIcon
-            title="Diseña tu menú"
-            text="Categorías, productos, precios y fotos."
-            icon={<Layers size={40} strokeWidth={1.5} className="text-purple-600" />}
-          />
-
-          <Arrow />
-
-          <StepIcon
-            title="Personaliza el tema"
-            text="Elige colores que reflejen tu marca."
-            icon={<Share2 size={40} strokeWidth={1.5} className="text-pink-500" />}
-          />
-
-          <Arrow />
-
-          <StepIcon
-            title="Comparte con QR"
-            text="Tus clientes acceden al menú al instante."
-            icon={<Send size={40} strokeWidth={1.5} className="text-green-600" />}
-          />
-
+        <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, idx) => (
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
+              className="relative rounded-3xl border border-white bg-white/80 p-6 text-left shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur"
+            >
+              <div className={`absolute -left-4 top-6 hidden h-16 w-16 rounded-3xl bg-gradient-to-br ${step.accent} md:block`} />
+              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-lg">
+                {step.icon}
+              </div>
+              <p className="mt-6 text-sm font-semibold text-blue-500">Paso {idx + 1}</p>
+              <h4 className="mt-2 text-2xl font-bold text-slate-900">{step.title}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.text}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function StepIcon({ title, text, icon }: StepIconProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-col items-center text-center max-w-xs"
-    >
-      <div className="p-4 rounded-full bg-gray-100 shadow-sm hover:shadow-lg transition transform hover:-translate-y-1">
-        {icon}
-      </div>
-      <h4 className="text-xl font-bold mt-4">{title}</h4>
-      <p className="text-gray-600 mt-1 text-sm">{text}</p>
-    </motion.div>
-  );
-}
-
-function Arrow() {
-  return (
-    <svg className="hidden md:block w-10 h-10 text-gray-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-4-4l4 4-4 4" />
-    </svg>
   );
 }

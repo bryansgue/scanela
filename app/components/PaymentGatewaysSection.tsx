@@ -56,30 +56,33 @@ export default function PaymentGatewaysSection() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="relative overflow-hidden py-32">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.15),_transparent_45%)]" />
+      <div className="relative mx-auto max-w-7xl px-6">
         {/* HEADER */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-extrabold mb-4">
-            Pasarelas de pago <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">integradas</span>
+        <div className="mb-16 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.5em] text-cyan-300">COBRÁ SIN LÍMITES</p>
+          <h2 className="mt-4 text-4xl font-black text-white">
+            Pasarelas de pago <span className="bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent">integradas</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Acepta pagos de tus clientes de forma segura. Tu dinero llega directamente a tu cuenta.
+          <p className="mt-5 text-lg text-slate-300 max-w-3xl mx-auto">
+            Aceptá pagos con tarjeta, billeteras y transferencias. El dinero va directo a tu cuenta con la misma seguridad que usa un banco.
           </p>
         </div>
 
         {/* GATEWAY CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {gateways.map((gateway, idx) => (
             <PaymentGatewayCard key={idx} {...gateway} index={idx} />
           ))}
         </div>
 
         {/* SECURITY SECTION */}
-        <div className="bg-white rounded-2xl p-12 shadow-lg border border-gray-200">
-          <h3 className="text-2xl font-bold mb-8 text-center">Seguridad de nivel bancario</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mt-16 rounded-3xl border border-white/10 bg-white/5 p-12 text-white shadow-[0_40px_120px_rgba(2,6,23,0.65)] backdrop-blur">
+          <h3 className="text-center text-2xl font-bold text-white">Seguridad de nivel bancario</h3>
+
+          <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             <SecurityFeature
               icon={<Lock size={32} className="text-blue-600" />}
               title="Encriptación SSL"
@@ -102,7 +105,6 @@ export default function PaymentGatewaysSection() {
             />
           </div>
         </div>
-
       </div>
     </section>
   );
@@ -125,36 +127,30 @@ function PaymentGatewayCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className={`
-        rounded-xl p-6 border-2 transition-all duration-300
-        ${supported
-          ? "bg-white border-blue-200 hover:shadow-lg hover:border-blue-400"
-          : "bg-gray-50 border-gray-200"
-        }
-      `}
+      className={`rounded-3xl border border-white/5 bg-white/5 p-6 text-white shadow-[0_30px_80px_rgba(15,23,42,0.45)] backdrop-blur transition hover:-translate-y-1 ${
+        supported ? "" : "opacity-80"
+      }`}
     >
-      <div className="text-4xl mb-3">{logo}</div>
-      <h4 className="text-lg font-bold mb-2">{name}</h4>
-      <p className="text-sm text-gray-600 mb-4">{description}</p>
+      <div className="text-4xl">{logo}</div>
+      <h4 className="mt-4 text-xl font-semibold">{name}</h4>
+      <p className="mt-2 text-sm text-slate-200">{description}</p>
 
-      <ul className="space-y-2 mb-6">
+      <ul className="mt-6 space-y-2 text-sm text-white/80">
         {features.map((feature, idx) => (
-          <li key={idx} className="text-sm flex items-start gap-2">
-            <span className="text-green-600 font-bold mt-0.5">✓</span>
-            <span className="text-gray-700">{feature}</span>
+          <li key={idx} className="flex items-start gap-2">
+            <span className="text-green-300">●</span>
+            <span>{feature}</span>
           </li>
         ))}
       </ul>
 
       {!supported && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-          <p className="text-xs text-blue-700 font-semibold">
-            🔜 Próximamente
-          </p>
+        <div className="mt-6 rounded-2xl border border-dashed border-white/30 bg-white/10 p-3 text-center text-xs font-semibold text-slate-200">
+          🔜 Próximamente
         </div>
       )}
     </motion.div>
@@ -172,9 +168,9 @@ function SecurityFeature({
 }) {
   return (
     <div className="text-center">
-      <div className="flex justify-center mb-4">{icon}</div>
-      <h4 className="font-bold text-gray-900 mb-2">{title}</h4>
-      <p className="text-sm text-gray-600">{description}</p>
+      <div className="mb-4 flex justify-center">{icon}</div>
+      <h4 className="mb-2 font-bold text-white">{title}</h4>
+      <p className="text-sm text-slate-200">{description}</p>
     </div>
   );
 }

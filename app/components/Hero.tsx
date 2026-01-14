@@ -240,9 +240,11 @@ export default function Hero() {
   };
 
   return (
-  <section className="relative overflow-hidden bg-gradient-to-b from-white via-blue-50/40 to-white pt-12 pb-16 sm:pt-16 sm:pb-24">
-      <div className="absolute inset-x-0 -top-32 h-72 bg-gradient-to-r from-blue-500/5 via-purple-500/10 to-pink-500/5 blur-3xl" />
-      <div className="absolute -bottom-24 left-1/2 h-72 w-[70%] -translate-x-1/2 rounded-full bg-purple-200/20 blur-[120px]" />
+    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-20 sm:pb-28">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#03091b] to-[#040c23]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),_transparent_60%)]" />
+      <div className="absolute inset-x-0 top-10 mx-auto h-64 w-[80%] rounded-full bg-gradient-to-r from-cyan-400 via-sky-500 to-indigo-600 opacity-40 blur-3xl" />
+      <div className="absolute -bottom-32 left-1/2 h-72 w-[70%] -translate-x-1/2 rounded-full bg-cyan-500/20 blur-[140px]" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
@@ -252,19 +254,19 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="text-left"
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-1 text-sm font-medium text-blue-700 shadow-sm">
-              <span className="text-blue-500">●</span> Nuevo panel 2025
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm font-medium text-cyan-200 shadow-sm backdrop-blur">
+              <span className="text-cyan-300">●</span> Nuevo panel 2025
             </span>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.8 }}
-              className="mt-5 text-3xl font-bold leading-tight text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
+              className="mt-5 text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl lg:text-6xl"
             >
               Crea menús digitales elegantes
               <br />
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 bg-clip-text text-transparent">
                 y actívalos en minutos
               </span>
             </motion.h1>
@@ -273,7 +275,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.8 }}
-              className="mt-4 text-base text-gray-600 sm:text-lg"
+              className="mt-4 text-base text-slate-200 sm:text-lg"
             >
               Controla productos, fotos, precios y pagos desde cualquier sucursal con un único QR.
             </motion.p>
@@ -282,11 +284,11 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35, duration: 0.8 }}
-              className="mt-5 space-y-3 text-sm text-gray-700 sm:text-base"
+              className="mt-5 space-y-3 text-sm text-white/80 sm:text-base"
             >
               {bulletPoints.map((point) => (
                 <li key={point} className="flex items-start gap-3">
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" />
                   <span>{point}</span>
                 </li>
               ))}
@@ -304,7 +306,7 @@ export default function Hero() {
                   >
                     <Link
                       href={primaryCta.href}
-                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl sm:w-auto"
+                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-4 text-lg font-semibold text-slate-900 shadow-xl shadow-cyan-500/30 transition hover:shadow-2xl hover:shadow-cyan-500/40 sm:w-auto"
                     >
                       {primaryCta.label}
                     </Link>
@@ -331,7 +333,7 @@ export default function Hero() {
                   >
                     <Link
                       href={secondaryCta.href}
-                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl border border-gray-300 bg-white px-8 py-4 text-lg font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50 sm:w-auto"
+                      className="inline-flex w-full min-w-[190px] items-center justify-center rounded-2xl border border-white/20 bg-transparent px-8 py-4 text-lg font-semibold text-white shadow-sm transition hover:bg-white/10 sm:w-auto"
                     >
                       {secondaryCta.label}
                     </Link>
@@ -357,10 +359,10 @@ export default function Hero() {
               {heroStats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-gray-200/80 bg-white/70 px-5 py-4 shadow-sm"
+                  className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 shadow-sm backdrop-blur"
                 >
-                  <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
-                  <p className="text-sm uppercase tracking-wide text-gray-500">{stat.label}</p>
+                  <p className="text-3xl font-semibold text-white">{stat.value}</p>
+                  <p className="text-sm uppercase tracking-wide text-slate-300">{stat.label}</p>
                 </div>
               ))}
             </motion.div>
@@ -372,7 +374,7 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.2 }}
             className="relative mx-auto flex w-full max-w-sm justify-center md:max-w-md"
           >
-            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-500/20 via-purple-500/15 to-pink-500/20 blur-3xl" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-cyan-400/30 via-sky-500/20 to-blue-800/40 blur-3xl" />
             <div className="pointer-events-none select-none">
               <div
                 className="relative rounded-[48px] border-[6px] border-black bg-black/95 p-2 shadow-[0_30px_120px_rgba(15,23,42,0.45)]"
@@ -431,7 +433,8 @@ export default function Hero() {
             <div className="relative left-1/2 w-screen -translate-x-1/2 px-3 sm:px-8 lg:px-10">
               <div className="mx-auto max-w-6xl">
                 <div className="flex flex-col items-center gap-1.5 pb-2 text-center">
-                  <p className="text-lg font-semibold text-gray-900">Negocios recientes</p>
+                  <p className="text-lg font-semibold text-white">Negocios recientes</p>
+                  <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">activaciones en tiempo real</p>
                 </div>
 
                 <div className="relative min-h-[90px] sm:min-h-[110px]">
@@ -440,25 +443,25 @@ export default function Hero() {
                   {Array.from({ length: 4 }).map((_, idx) => (
                     <div
                       key={`skeleton-${idx}`}
-                      className="flex animate-pulse items-center gap-3 rounded-2xl border border-gray-200/60 bg-white/60 px-3.5 py-2"
+                      className="flex animate-pulse items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2 text-white/70"
                     >
-                      <div className="h-11 w-11 rounded-full bg-gradient-to-br from-slate-200 to-slate-100" />
+                      <div className="h-11 w-11 rounded-full bg-gradient-to-br from-cyan-500/30 to-slate-900" />
                       <div className="flex-1 space-y-2">
-                        <div className="h-3 w-3/4 rounded-full bg-slate-200" />
-                        <div className="h-3 w-1/2 rounded-full bg-slate-100" />
+                        <div className="h-3 w-3/4 rounded-full bg-white/20" />
+                        <div className="h-3 w-1/2 rounded-full bg-white/10" />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : recentBusinesses.length === 0 ? (
-                <div className="flex h-32 flex-col items-center justify-center text-center text-sm text-gray-500">
+                <div className="flex h-32 flex-col items-center justify-center text-center text-sm text-slate-300">
                   <p>Aún no hay clientes con logos cargados.</p>
-                  <p className="text-xs text-gray-400">Vuelve pronto para ver nuevas activaciones.</p>
+                  <p className="text-xs text-slate-500">Vuelve pronto para ver nuevas activaciones.</p>
                 </div>
               ) : (
-                <div className="relative overflow-hidden rounded-2xl border border-white/50 bg-white/60 px-2.5 py-2 backdrop-blur">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 w-18 bg-gradient-to-r from-white to-transparent" />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 w-18 bg-gradient-to-l from-white to-transparent" />
+                <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/10 px-2.5 py-2 shadow-[0_20px_70px_rgba(2,6,23,0.6)] backdrop-blur">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#040c23] via-[#040c23]/80 to-transparent" />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#040c23] via-[#040c23]/80 to-transparent" />
 
                   <motion.div
                     className="flex w-max min-w-full items-center gap-3 py-1"
@@ -468,9 +471,9 @@ export default function Hero() {
                     {marqueeBusinesses.map((business, idx) => (
                       <div
                         key={`marquee-business-${business.id}-${idx}`}
-                        className="flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border border-gray-200/80 bg-white/90 px-3 py-2 shadow-sm"
+                        className="flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border border-white/15 bg-white/5 px-3 py-2 text-white shadow-sm"
                       >
-                        <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
+                        <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/40 bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 shadow-lg shadow-cyan-500/20">
                           {business.logo ? (
                             <div
                               className="h-full w-full"
@@ -489,8 +492,8 @@ export default function Hero() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-gray-900">{business.name}</p>
-                          <div className="flex items-center gap-1 text-[11px] text-gray-500">
+                          <p className="truncate text-sm font-semibold text-white">{business.name}</p>
+                          <div className="flex items-center gap-1 text-[11px] text-cyan-100/80">
                             <span className="text-sm" role="img" aria-label="País del negocio">
                               {getBusinessFlag(business.country_code)}
                             </span>
