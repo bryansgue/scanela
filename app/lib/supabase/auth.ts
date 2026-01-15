@@ -129,6 +129,16 @@ export async function getUserPlan(): Promise<UserPlan> {
       .single();
 
     if (error) {
+      if ((error as any)?.code === "PGRST116") {
+        console.warn("⚠️ No existía suscripción, creando plan inicial 'free'");
+        await createInitialSubscription(user.id);
+        planCache = {
+          userId: user.id,
+          plan: "free",
+          timestamp: now,
+        };
+        return "free";
+      }
       console.error("❌ Error obteniendo plan:", error);
       return "free";
     }
