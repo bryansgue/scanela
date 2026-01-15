@@ -719,13 +719,17 @@ export default function MenuEditor({
             </button>
             <button
               onClick={() => {
-                // Llamar a la función de importar desde el padre
                 const event = new CustomEvent('importMenu');
                 window.dispatchEvent(event);
               }}
-              className="px-4 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
+              disabled
+              title="Muy pronto: cargaremos tus menús automáticamente"
+              className="px-4 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2 shadow-md whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-700 disabled:shadow-none"
             >
-              📷 Cargar menú
+              <div className="flex flex-col items-center leading-tight">
+                <span>📷 Cargar menú</span>
+                <span className="text-xs font-medium opacity-80">(Próximamente)</span>
+              </div>
             </button>
           </div>
         </div>
@@ -827,6 +831,13 @@ export default function MenuEditor({
                   <span className="text-sm bg-blue-100 text-blue-600 px-4 py-2 rounded-full font-semibold">
                     {category.products ? category.products.length : 0} productos
                   </span>
+                  <button
+                    onClick={() => deleteCategory(category.id)}
+                    className="p-2 text-red-500 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    title="Eliminar categoría"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
               </div>
 
@@ -1105,16 +1116,6 @@ export default function MenuEditor({
                     className="w-full px-4 py-3 border-2 border-dashed border-orange-400 rounded-lg hover:bg-orange-50 transition text-orange-600 font-semibold flex items-center justify-center gap-2"
                   >
                     <Plus size={20} /> Agregar producto
-                  </button>
-
-                  {/* Botón Eliminar categoría */}
-                  <button
-                    onClick={() => deleteCategory(category.id)}
-                    className="w-full px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold flex items-center justify-center gap-2"
-                    title="Eliminar categoría"
-                  >
-                    <Trash2 size={18} />
-                    Eliminar categoría
                   </button>
 
                 </div>

@@ -17,6 +17,7 @@ import { useState } from "react";
 export default function PrivateHeader({ user }: { user: any }) {
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const landingUrl = process.env.NEXT_PUBLIC_SITE_URL || "/";
 
   const isActive = (path: string) => pathname.startsWith(path);
 
@@ -30,7 +31,7 @@ export default function PrivateHeader({ user }: { user: any }) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* LOGO - LEFT */}
-        <Link href="/dashboard" className="flex items-center gap-3 group">
+  <Link href={landingUrl} className="flex items-center gap-3 group">
           <div className="relative w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all">
             <span className="text-lg font-bold text-white">S</span>
           </div>
