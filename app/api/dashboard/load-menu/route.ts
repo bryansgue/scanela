@@ -1,6 +1,33 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
+const normalizeBusinessId = (value: string | number | bigint | null | undefined) => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return { queryValue: value, displayValue: value.toString() } as const;
+  }
+
+  if (typeof value === 'bigint') {
+    const asString = value.toString();
+    return { queryValue: asString, displayValue: asString } as const;
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    if (/^-?\d+$/.test(trimmed)) {
+      const asNumber = Number(trimmed);
+      if (Number.isSafeInteger(asNumber)) {
+        return { queryValue: asNumber, displayValue: trimmed } as const;
+      }
+    }
+
+    return { queryValue: trimmed, displayValue: trimmed } as const;
+  }
+
+  return null;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -33,9 +60,10 @@ export async function GET(request: NextRequest) {
 
     // Obtener businessId del query string
     const searchParams = request.nextUrl.searchParams;
-    const businessId = searchParams.get('businessId');
+    const businessIdParam = searchParams.get('businessId');
+    const normalized = normalizeBusinessId(businessIdParam);
 
-    if (!businessId) {
+    if (!normalized) {
       return NextResponse.json(
         { success: false, error: 'businessId es requerido', menu: null },
         { status: 400 }
@@ -43,20 +71,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Cargar menú usando SERVICE_ROLE para el negocio específico
-    const numericBusinessId = parseInt(businessId);
     console.log('🔍 BUSCANDO en BD:', {
       user_id: user.id,
-      business_id: numericBusinessId,
-      business_id_tipo: typeof numericBusinessId,
+      business_id: normalized.displayValue,
+      business_id_tipo: typeof normalized.queryValue,
     });
 
     const { data: menus, error: loadError } = await supabase
       .from('menus')
       .select('id, business_id, business_name, theme, menu_data, created_at, updated_at')
       .eq('user_id', user.id)
-      .eq('business_id', numericBusinessId)
+      .eq('business_id', normalized.queryValue)
       .order('updated_at', { ascending: false })
       .limit(1);
+
+    if (loadError) {
+      console.error('❌ Error consultando menú:', loadError);
+      return NextResponse.json(
+        { success: false, error: loadError.message, menu: null },
+        { status: 500 }
+      );
+    }
 
     console.log('📊 RESULTADOS DE BÚSQUEDA:', {
       cantidad_registros: menus?.length || 0,

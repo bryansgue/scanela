@@ -688,9 +688,30 @@ export default function DashboardPage() {
           .eq('user_id', session.user.id)
           .order('created_at', { ascending: true });
 
-        const businesses = userBusinesses && userBusinesses.length > 0 
-          ? userBusinesses 
-          : [{ id: 1, name: 'Mi Restaurante', logo: '🍽️' }];
+        let businesses = userBusinesses || [];
+
+        if (!businesses.length) {
+          console.log('⚠️ Usuario sin negocios - creando uno por defecto');
+          const { data: defaultBusiness, error: defaultBusinessError } = await supabase
+            .from('businesses')
+            .insert({
+              user_id: session.user.id,
+              name: 'Mi Restaurante',
+              logo: '🍽️',
+            })
+            .select('id, name, logo')
+            .single();
+
+          if (defaultBusinessError) {
+            console.error('❌ No se pudo crear negocio por defecto:', defaultBusinessError);
+          } else if (defaultBusiness) {
+            businesses = [defaultBusiness];
+          }
+        }
+
+        if (!businesses.length) {
+          throw new Error('No se pudieron recuperar o crear negocios para este usuario');
+        }
 
         // 🚀 NUEVA: Precarga TODOS los menús en una sola solicitud
         await preloadAllMenus(session.access_token);
@@ -944,6 +965,24 @@ export default function DashboardPage() {
         {/* STATE BAR */}
         <StateBar isDemo={isDemo} plan={userPlan} />
 
+        {/* UPGRADE BANNER FOR FREE PLAN */}
+        {userPlan === 'free' && (
+          <div className="rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+            <div>
+              <p className="text-sm font-semibold text-purple-700">Desbloquea el QR imprimible</p>
+              <p className="text-sm text-purple-600/80 mt-1 max-w-2xl whitespace-nowrap">
+                Actualiza a <span className="font-semibold">Scanela Menús</span> para compartir tu menú con un código QR descargable, más negocios y soporte prioritario.
+              </p>
+            </div>
+            <Link
+              href="/settings?tab=plan"
+              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl px-5 py-2.5 shadow-md transition"
+            >
+              🚀 Actualizar plan
+            </Link>
+          </div>
+        )}
+
         {/* BUSINESS SELECTOR - CARD STYLE */}
         {businesses.length === 0 ? (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center max-w-md mx-auto">
@@ -969,7 +1008,6 @@ export default function DashboardPage() {
               
               {/* LEFT: Business Selector */}
               <div className="flex-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase mb-3 tracking-wider">Negocios</p>
                 <BusinessSelector
                   businesses={businesses.map((b) => ({
                     ...b,

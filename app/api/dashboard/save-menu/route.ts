@@ -1,6 +1,33 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
+const normalizeBusinessId = (value: unknown) => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return { queryValue: value, displayValue: value.toString() } as const;
+  }
+
+  if (typeof value === 'bigint') {
+    const asString = value.toString();
+    return { queryValue: asString, displayValue: asString } as const;
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    if (/^-?\d+$/.test(trimmed)) {
+      const asNumber = Number(trimmed);
+      if (Number.isSafeInteger(asNumber)) {
+        return { queryValue: asNumber, displayValue: trimmed } as const;
+      }
+    }
+
+    return { queryValue: trimmed, displayValue: trimmed } as const;
+  }
+
+  return null;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -31,20 +58,18 @@ export async function POST(request: NextRequest) {
     }
 
     const { businessId, businessName, theme, menuData } = await request.json();
+    const normalized = normalizeBusinessId(businessId);
 
-    if (!businessId) {
+    if (!normalized) {
       return NextResponse.json(
         { success: false, error: 'businessId es requerido' },
         { status: 400 }
       );
     }
 
-    // Convertir businessId a número porque en BD es BIGINT, no VARCHAR
-    const numericBusinessId = parseInt(businessId, 10);
-
     console.log('🔴 SAVE-MENU RECIBIÓ:', {
       businessId_raw: businessId,
-      businessId_numeric: numericBusinessId,
+      businessId_normalized: normalized.displayValue,
       businessName: businessName,
       theme: theme,
       theme_tipo: typeof theme,
@@ -53,16 +78,21 @@ export async function POST(request: NextRequest) {
 
     try {
       // Buscar si ya existe menú para este negocio
-      const { data: existingMenus } = await supabase
+      const { data: existingMenus, error: existingMenusError } = await supabase
         .from('menus')
         .select('*')
         .eq('user_id', user.id)
-        .eq('business_id', numericBusinessId)
+        .eq('business_id', normalized.queryValue)
         .limit(1);
+
+      if (existingMenusError) {
+        console.error('❌ Error consultando menús existentes:', existingMenusError);
+        return NextResponse.json({ success: false, error: existingMenusError.message }, { status: 500 });
+      }
 
       // Datos que queremos guardar
       const newData = {
-        business_id: numericBusinessId,
+        business_id: normalized.queryValue,
         business_name: businessName,
         theme: theme,
         menu_data: menuData,
@@ -104,7 +134,7 @@ export async function POST(request: NextRequest) {
         // Hay cambios - hacer UPDATE
         console.log('🟡 EJECUTANDO UPDATE con theme:', {
           theme_a_guardar: newData.theme,
-          business_id: numericBusinessId,
+          business_id: normalized.displayValue,
           user_id: user.id,
         });
 
@@ -115,21 +145,22 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString(),
           })
           .eq('user_id', user.id)
-          .eq('business_id', numericBusinessId)
+          .eq('business_id', normalized.queryValue)
           .select();
 
         if (result.error) {
-          console.log('� ERROR EN UPDATE:', {
+          console.error('❌ ERROR EN UPDATE:', {
             error_message: result.error.message,
             error_code: result.error.code,
             error_details: result.error.details,
             error_hint: result.error.hint,
           });
+
+          return NextResponse.json({ success: false, error: result.error.message }, { status: 500 });
         }
 
-        console.log('�🟢 UPDATE COMPLETADO:', {
+        console.log('🟢 UPDATE COMPLETADO:', {
           success: !!result.data,
-          error: result.error?.message,
           rows_affected: result.data?.length,
           theme_guardado_en_bd: result.data?.[0]?.theme,
         });
@@ -144,7 +175,7 @@ export async function POST(request: NextRequest) {
         // Crear nuevo menú
         console.log('🟡 EJECUTANDO INSERT con theme:', {
           theme_a_guardar: newData.theme,
-          business_id: numericBusinessId,
+          business_id: normalized.displayValue,
           user_id: user.id,
         });
 
@@ -156,9 +187,19 @@ export async function POST(request: NextRequest) {
           })
           .select();
 
+        if (result.error) {
+          console.error('❌ ERROR EN INSERT:', {
+            error_message: result.error.message,
+            error_code: result.error.code,
+            error_details: result.error.details,
+            error_hint: result.error.hint,
+          });
+
+          return NextResponse.json({ success: false, error: result.error.message }, { status: 500 });
+        }
+
         console.log('🟢 INSERT COMPLETADO:', {
           success: !!result.data,
-          error: result.error,
           theme_guardado_en_bd: result.data?.[0]?.theme,
         });
 
@@ -170,17 +211,17 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (dbError) {
-      console.error('Database error:', dbError);
+      console.error('❌ Database error:', dbError);
       return NextResponse.json({
-        success: true, // Retornar éxito igual
-        message: 'Guardado',
-      });
+        success: false,
+        error: dbError instanceof Error ? dbError.message : 'Error guardando menú',
+      }, { status: 500 });
     }
   } catch (error) {
     console.error('Error in save-menu:', error);
     return NextResponse.json(
-      { success: true }, // Retornar éxito para no bloquear
-      { status: 200 }
+      { success: false, error: 'Error interno guardando menú' },
+      { status: 500 }
     );
   }
 }

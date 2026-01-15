@@ -24,20 +24,33 @@ export default function BusinessSelector({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const activeBusiness = businesses.find((b) => b.id === selected?.id) || selected;
+  const activeItemsCount = activeBusiness?.items ?? 0;
+
   return (
     <div className="flex items-center gap-4">
       {/* Dropdown mejorado */}
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-3 px-5 py-2.5 w-64 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+          className="w-72 bg-gradient-to-r from-blue-50 via-white to-purple-50 border border-blue-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 px-5 py-3 text-left"
         >
-          <span className="text-2xl group-hover:scale-110 transition flex-shrink-0">{selected?.logo}</span>
-          <span className="text-gray-900 font-semibold truncate">{selected?.name}</span>
-          <ChevronDown
-            size={18}
-            className={`text-blue-600 transition-transform duration-300 flex-shrink-0 ml-auto ${isOpen ? 'rotate-180' : ''}`}
-          />
+          <div className="flex items-start gap-3">
+            <span className="text-3xl bg-white rounded-xl px-3 py-1 shadow-sm border border-white/70 flex-shrink-0">
+              {selected?.logo}
+            </span>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] uppercase tracking-widest text-blue-500 font-semibold">Negocio activo</p>
+              <p className="text-lg font-semibold text-gray-900 truncate">{selected?.name}</p>
+              <p className="text-xs text-gray-500">{activeItemsCount} productos</p>
+            </div>
+
+            <ChevronDown
+              size={18}
+              className={`text-blue-600 transition-transform duration-300 flex-shrink-0 mt-2 ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </div>
         </button>
 
         {isOpen && (
