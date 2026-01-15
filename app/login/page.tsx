@@ -11,6 +11,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://scanela.com"
+      : "http://localhost:3000");
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -36,10 +42,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo:
-          process.env.NODE_ENV === "production"
-            ? "https://tudominio.com/dashboard"
-            : "http://localhost:3000/dashboard",
+        redirectTo: `${siteUrl}/dashboard`,
       },
     });
 
