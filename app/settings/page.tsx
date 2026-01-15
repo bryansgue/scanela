@@ -5,10 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import PrivateLayout from "../components/PrivateLayout";
 import SettingsSidebar from "./components/SettingsSidebar";
 import SettingsProfile from "./components/SettingsProfile";
-import SettingsSecurity from "./components/SettingsSecurity";
 import SettingsPlanSimple from "./components/SettingsPlanSimple";
 import SettingsDanger from "./components/SettingsDanger";
-import { getUserProfile, isAuthProvider } from "../lib/supabase/auth";
+import { getUserProfile } from "../lib/supabase/auth";
 import { Loader2 } from "lucide-react";
 
 interface UserProfile {
@@ -17,6 +16,8 @@ interface UserProfile {
   fullName: string;
   avatar?: string;
   provider: string;
+  providers: string[];
+  rawUser?: any;
 }
 
 export default function SettingsPage() {
@@ -44,9 +45,9 @@ function SettingsPageContent() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<
-    "profile" | "plan" | "security" | "danger"
-  >("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "plan" | "danger">(
+    "profile"
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -77,14 +78,25 @@ function SettingsPageContent() {
       if (checkoutStatus) {
         router.replace("/settings?tab=plan", { scroll: false });
       }
+      return;
+    }
+
+    if (requestedTab === "danger") {
+      setActiveTab("danger");
+      return;
+    }
+
+    if (requestedTab === "security" || requestedTab === "profile") {
+      setActiveTab("profile");
+      if (requestedTab === "security") {
+        router.replace("/settings?tab=profile", { scroll: false });
+      }
     }
   }, [router, searchParams]);
 
-  const isExternalProvider = user ? isAuthProvider(user.provider) : false;
-
   if (loading) {
     return (
-      <PrivateLayout>
+      <PrivateLayout user={user?.rawUser}>
         <div className="min-h-screen bg-gray-100 p-10 flex justify-center items-center">
           <div className="text-center">
             <Loader2 size={48} className="animate-spin text-blue-600 mx-auto mb-4" />
@@ -97,7 +109,7 @@ function SettingsPageContent() {
 
   if (error || !user) {
     return (
-      <PrivateLayout>
+      <PrivateLayout user={user?.rawUser}>
         <div className="min-h-screen bg-gray-100 p-10 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg p-10 text-center max-w-md">
             <p className="text-red-600 mb-4">{error || "Usuario no encontrado"}</p>
@@ -114,7 +126,7 @@ function SettingsPageContent() {
   }
 
   return (
-    <PrivateLayout>
+    <PrivateLayout user={user.rawUser}>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 md:p-10">
         <div className="w-full max-w-7xl mx-auto">
           {/* Título con nombre completo */}
@@ -129,21 +141,24 @@ function SettingsPageContent() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <SettingsSidebar activeTab={activeTab} onTabChange={(tab) => {
-                setActiveTab(tab);
-                router.replace(`/settings?tab=${tab}`, { scroll: false });
-              }} />
+              <SettingsSidebar
+                activeTab={activeTab}
+                onTabChange={(tab) => {
+                  setActiveTab(tab);
+                  router.replace(`/settings?tab=${tab}`, { scroll: false });
+                }}
+              />
             </div>
 
             {/* Contenido Principal */}
             <div className="lg:col-span-3">
               {activeTab === "profile" && (
-                <SettingsProfile user={user} onUserUpdate={setUser} />
+                <SettingsProfile
+                  user={user}
+                  onUserUpdate={(updatedUser) => setUser(updatedUser)}
+                />
               )}
               {activeTab === "plan" && <SettingsPlanSimple />}
-              {activeTab === "security" && (
-                <SettingsSecurity isExternalProvider={isExternalProvider} />
-              )}
               {activeTab === "danger" && <SettingsDanger />}
             </div>
           </div>

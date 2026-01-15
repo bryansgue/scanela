@@ -14,17 +14,30 @@ export async function getUserProfile() {
   } = await supabase.auth.getUser();
   if (!user || !user.email) return null;
 
+  const identityProviders = Array.isArray((user as any).identities)
+    ? (user as any).identities
+        .map((identity: any) => identity?.provider)
+        .filter(Boolean)
+    : [];
+
+  const providerCandidates = [
+    ...(identityProviders as string[]),
+    user.app_metadata?.provider,
+  ].filter(Boolean) as string[];
+
+  const providers = Array.from(
+    new Set(providerCandidates.length ? providerCandidates : ['email'])
+  );
+
   return {
     id: user.id,
     email: user.email,
     fullName: user.user_metadata?.full_name || user.email.split("@")[0] || "Usuario",
     avatar: user.user_metadata?.avatar_url,
-    provider: user.app_metadata?.provider || "email",
+    provider: user.app_metadata?.provider || providers[0] || "email",
+    providers,
+    rawUser: user,
   };
-}
-
-export function isAuthProvider(provider: string): boolean {
-  return ["google", "github", "discord"].includes(provider);
 }
 
 export async function updateUserProfile(updates: { full_name?: string }) {

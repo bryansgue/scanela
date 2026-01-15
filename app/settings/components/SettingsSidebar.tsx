@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  User,
-  Lock,
-  CreditCard,
-  AlertTriangle,
-} from "lucide-react";
+import { User, CreditCard, AlertTriangle } from "lucide-react";
 import Panel from "@/components/Panel";
 
 interface SettingsSidebarProps {
-  activeTab: "profile" | "plan" | "security" | "danger";
-  onTabChange: (tab: "profile" | "plan" | "security" | "danger") => void;
+  activeTab: "profile" | "plan" | "danger";
+  onTabChange: (tab: "profile" | "plan" | "danger") => void;
 }
 
 export default function SettingsSidebar({
@@ -20,21 +15,15 @@ export default function SettingsSidebar({
   const tabs = [
     {
       id: "profile" as const,
-      label: "Perfil",
+      label: "Cuenta",
       icon: User,
-      description: "Información personal",
+      description: "Datos personales y accesos",
     },
     {
       id: "plan" as const,
       label: "Plan & Suscripción",
       icon: CreditCard,
       description: "Gestiona tu plan",
-    },
-    {
-      id: "security" as const,
-      label: "Seguridad",
-      icon: Lock,
-      description: "Contraseña y autenticación",
     },
     {
       id: "danger" as const,
