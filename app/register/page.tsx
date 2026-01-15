@@ -159,7 +159,7 @@ export default function RegisterPage() {
             disabled:opacity-50 disabled:cursor-not-allowed
           "
         >
-          <img src="/google.png" className="w-5 h-5" />
+          <img src="/google.png" alt="Google" className="w-5 h-5" />
           {oauthLoading ? "Conectando..." : "Continuar con Google"}
         </button>
 

@@ -76,7 +76,7 @@ export default function ScanelaPricingSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* HEADER */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-extrabold mb-4">
+          <h2 className="text-5xl font-extrabold mb-4 text-slate-900">
             Precios simples y <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">justos</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">

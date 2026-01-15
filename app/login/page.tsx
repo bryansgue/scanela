@@ -122,7 +122,7 @@ export default function LoginPage() {
           className="w-full bg-white border border-gray-300 p-3 rounded-xl shadow-sm 
                      hover:bg-gray-50 flex items-center justify-center gap-2 text-gray-700 font-medium transition"
         >
-          <img src="/google.svg" className="w-5 h-5" />
+          <img src="/google.png" alt="Google" className="w-5 h-5" />
           Iniciar sesión con Google
         </button>
 
