@@ -1003,11 +1003,10 @@ export default function DashboardPage() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              
-              {/* LEFT: Business Selector */}
-              <div className="flex-1">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4">
+            <div className="flex flex-col xl:flex-row xl:flex-wrap gap-4 items-stretch">
+              {/* Business Selector + Counter */}
+              <div className="flex-1 min-w-[280px]">
                 <BusinessSelector
                   businesses={businesses.map((b) => ({
                     ...b,
@@ -1018,29 +1017,56 @@ export default function DashboardPage() {
                   onAddBusiness={handleAddBusiness}
                   canAddBusiness={!isDemo && businesses.length < maxBusinesses}
                   isDemo={isDemo}
-                  maxBusinesses={maxBusinesses}
-                  currentBusinessCount={businesses.length}
                 />
+
+                {!isDemo && businesses.length < maxBusinesses && (
+                  <div className="mt-3 flex justify-center">
+                    <button
+                      onClick={handleAddBusiness}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-dashed border-blue-300 bg-white px-4 py-1 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50 transition"
+                    >
+                      <span aria-hidden>➕</span>
+                      Agregar negocio
+                    </button>
+                  </div>
+                )}
+
               </div>
 
-              {/* DIVIDER */}
-              <div className="hidden lg:block w-px h-16 bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
+              {/* Quick Templates */}
+              <div className="w-full xl:w-[360px] rounded-2xl border border-dashed border-gray-300 bg-gradient-to-br from-white via-slate-50 to-gray-100 p-3 shadow-inner">
+                <div className="mb-3">
+                  <p className="text-sm font-semibold text-gray-700">
+                    Plantillas rápidas <span className="text-gray-400">—</span> <span className="text-gray-600">Carga un menú en 3 clics</span>
+                  </p>
+                </div>
+                <TemplatesSection onLoadTemplate={loadTemplate} />
+              </div>
 
-              {/* CENTER: Plan Badge */}
-              <div className="flex flex-col items-center">
-                <p className="text-xs font-semibold text-gray-500 uppercase mb-3 tracking-wider">Plan Actual</p>
+              {/* Plan Badge */}
+              <div className="w-full sm:w-auto flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-slate-50 px-5 py-3 shadow-sm">
+                <p className="text-xs font-semibold text-gray-500 uppercase mb-2 tracking-wider">Plan Actual</p>
                 <PlanBadge businessCount={businesses.length} />
+                {!isDemo && maxBusinesses && (
+                  <div className="mt-3 flex flex-col items-center gap-2 text-center">
+                    <div className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50/90 text-blue-700 px-4 py-1 text-xs font-semibold shadow-sm">
+                      <span>
+                        {businesses.length}/{maxBusinesses}
+                      </span>
+                      <span className="uppercase tracking-wide text-[10px] font-semibold text-blue-600/80">
+                        negocios disponibles
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* DIVIDER */}
-              <div className="hidden lg:block w-px h-16 bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
-
-              {/* RIGHT: Action Buttons */}
+              {/* Premium Actions */}
               {selectedBusiness && (
-                <div className="flex flex-col items-center gap-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones Premium</p>
+                <div className="flex flex-col gap-2.5 w-full sm:w-auto min-w-[240px]">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center sm:text-left">Acciones Premium</p>
                   
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 w-full">
                     {/* QR Button */}
                     <button
                       onClick={() => {
@@ -1051,7 +1077,7 @@ export default function DashboardPage() {
                         window.open(`/qr/print/${menuData.id}`, '_blank');
                       }}
                       disabled={!menuData.id || userPlan === 'free'}
-                      className={`font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
+                        className={`w-full font-semibold py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
                         (menuData.id && userPlan !== 'free')
                           ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105 cursor-pointer'
                           : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
@@ -1076,7 +1102,7 @@ export default function DashboardPage() {
                         }
                       }}
                       disabled={userPlan !== 'ventas'}
-                      className={`font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
+                        className={`w-full font-semibold py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
                         userPlan === 'ventas'
                           ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:shadow-lg hover:scale-105 cursor-pointer'
                           : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
@@ -1105,16 +1131,6 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
           {/* LEFT PANEL: TEMPLATES + EDITOR */}
           <div className="flex flex-col gap-4">
-            {/* PLANTILLAS RÁPIDAS */}
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-bold text-gray-700">📋 Plantillas Rápidas</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <TemplatesSection onLoadTemplate={loadTemplate} />
-              </div>
-            </div>
-
             {/* EDITOR PANEL */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden flex flex-col flex-1">
               <MenuEditor

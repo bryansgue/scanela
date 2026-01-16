@@ -10,8 +10,6 @@ export default function BusinessSelector({
   onAddBusiness,
   canAddBusiness,
   isDemo,
-  maxBusinesses,
-  currentBusinessCount,
 }: {
   businesses: any[];
   selected: any;
@@ -19,8 +17,6 @@ export default function BusinessSelector({
   onAddBusiness?: () => void;
   canAddBusiness: boolean;
   isDemo: boolean;
-  maxBusinesses?: number;
-  currentBusinessCount?: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,12 +24,12 @@ export default function BusinessSelector({
   const activeItemsCount = activeBusiness?.items ?? 0;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 w-full">
       {/* Dropdown mejorado */}
-      <div className="relative">
+      <div className="relative w-full max-w-2xl">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-72 bg-gradient-to-r from-blue-50 via-white to-purple-50 border border-blue-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 px-5 py-3 text-left"
+          className="w-full bg-gradient-to-r from-blue-50 via-white to-purple-50 border border-blue-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 px-5 py-3 text-left"
         >
           <div className="flex items-start gap-3">
             <span className="text-3xl bg-white rounded-xl px-3 py-1 shadow-sm border border-white/70 flex-shrink-0">
@@ -54,7 +50,7 @@ export default function BusinessSelector({
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden animate-slideDown">
+          <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden animate-slideDown">
             {/* Header del dropdown */}
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-3 border-b border-gray-200">
               <p className="text-xs font-bold text-blue-900 uppercase tracking-widest">Tus negocios</p>
@@ -118,17 +114,6 @@ export default function BusinessSelector({
       {isDemo && (
         <div className="ml-auto px-3 py-1 bg-amber-100 border-2 border-amber-300 rounded-full text-xs font-bold text-amber-800">
           📵 Solo 1 negocio
-        </div>
-      )}
-
-      {/* Indicador de límite de negocios */}
-      {!isDemo && maxBusinesses && currentBusinessCount !== undefined && (
-        <div className={`ml-auto px-3 py-1 rounded-full text-xs font-bold ${
-          currentBusinessCount >= maxBusinesses
-            ? 'bg-red-100 border-2 border-red-300 text-red-700'
-            : 'bg-blue-100 border-2 border-blue-300 text-blue-700'
-        }`}>
-          {currentBusinessCount}/{maxBusinesses} negocios
         </div>
       )}
     </div>
