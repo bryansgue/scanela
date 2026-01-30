@@ -2,218 +2,314 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, Zap, Crown } from "lucide-react";
+import {
+  Check,
+  Lock,
+  Sparkles,
+  Zap,
+  Image as ImageIcon,
+  Star,
+  Move,
+  Palette,
+  Link2,
+  BadgeCheck,
+} from "lucide-react";
+
+const ANNUAL_DISCOUNT = 0.2;
+
+/* =========================
+   DATA
+========================= */
+
+const plans = [
+  {
+    id: "free",
+    name: "Scanela Free",
+    icon: Zap,
+    monthly: 0,
+    description: "Funciona, pero se ve genérico",
+    tagline: "Ideal para empezar y probar Scanela",
+    highlight: false,
+    cta: "Crear menú gratis",
+    features: [
+      { label: "Menú digital accesible por QR", available: true },
+      { label: "Actualización del menú en tiempo real", available: true },
+      { label: "Diseño responsive", available: true },
+      { label: "Crear y editar productos", available: true },
+      { label: "URL estándar de Scanela", available: true },
+      { label: "Imágenes de productos", available: false },
+      { label: "Productos destacados", available: false },
+      { label: "Orden manual de productos", available: false },
+      { label: "Logo del negocio", available: false },
+      { label: "Colores personalizados", available: false },
+    ],
+  },
+  {
+    id: "menu",
+    name: "Scanela Menú",
+    icon: Sparkles,
+    monthly: 4.99,
+    description: "Es tu menú, con tu marca",
+    tagline: "Control total y apariencia profesional",
+    highlight: true,
+    popular: true,
+    cta: "Activar plan Menú",
+    features: [
+      { label: "Todo lo del plan Free", available: true },
+      { label: "URL personalizada", available: true, icon: Link2 },
+      { label: "Imágenes de productos", available: true, icon: ImageIcon },
+      { label: "Productos destacados", available: true, icon: Star },
+      { label: "Reordenar productos y categorías", available: true, icon: Move },
+      { label: "Logo del negocio", available: true, icon: BadgeCheck },
+      { label: "Colores personalizados del menú", available: true, icon: Palette },
+      { label: "Menú sin marca Scanela", available: true },
+    ],
+  },
+];
+
+/* =========================
+   SECTION
+========================= */
 
 export default function ScanelaPricingSection() {
-  const [billing, setBilling] = useState<"monthly">("monthly");
-
-  const plans = [
-    {
-      id: "free",
-      name: "Scanela Free",
-      icon: "🆓",
-      monthly: 0,
-      description: "Perfecto para comenzar",
-      tagline: "Diseña tu menú completamente gratis",
-      features: [
-        "✅ Editor intuitivo de productos",
-        "✅ Hasta 12 temas de color",
-        "✅ Logo personalizado",
-        "✅ Integración WhatsApp",
-        "❌ QR descargable",
-        "❌ Sistema de órdenes",
-        "❌ Múltiples negocios",
-      ],
-      highlight: false,
-      cta: "Crear menú gratis",
-    },
-    {
-      id: "menu",
-      name: "Scanela Menú",
-      icon: "📋",
-      monthly: 4.99,
-      description: "Para restaurantes modernos",
-      tagline: "Tu menú digital + QR compartible",
-      features: [
-        "✅ Todo lo de Free +",
-        "✅ QR Descargable e Imprimible",
-        "✅ Hasta 3 negocios activos",
-        "✅ Sin límite de categorías",
-        "✅ Preview en tiempo real",
-        "✅ Analytics básicos",
-        "✅ Soporte por email",
-        "❌ Sistema de órdenes y pagos",
-      ],
-      highlight: false,
-      cta: "Comenzar",
-    },
-    {
-      id: "ventas",
-      name: "Scanela Ventas",
-      icon: "💳",
-      monthly: 9.99,
-      transactionFee: 0.08,
-      description: "Para negocios que toman órdenes",
-      tagline: "Menú digital + Carrito + Pagos",
-      features: [
-        "✅ Todo lo de Menú +",
-        "✅ Hasta 5 negocios activos",
-        "✅ Carrito de compras",
-        "✅ Sistema de órdenes y pagos",
-        "✅ Integración de pasarelas",
-        "✅ Panel de órdenes recibidas",
-        "✅ Analytics avanzados",
-        "✅ Soporte prioritario",
-      ],
-      highlight: true,
-      popular: true,
-      cta: "Activar ahora",
-    },
-  ];
+  const [billing, setBilling] = useState<"monthly" | "annual">("annual");
 
   return (
-    <section id="pricing" className="py-20 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section
+      id="pricing"
+      className="
+        relative overflow-hidden py-24
+        bg-gradient-to-b
+        from-slate-100
+        via-white
+        to-slate-50
+      "
+    >
+      {/* transición superior homogénea */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-slate-200/40 to-transparent" />
+
+      <div className="relative mx-auto max-w-7xl px-6">
         {/* HEADER */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-extrabold mb-4 text-slate-900">
-            Precios simples y <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">justos</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Elige el plan que mejor se adapte a tu negocio. Puedes cambiar en cualquier momento sin penalizaciones.
+        <div className="mb-14 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-600">
+            PRECIOS
           </p>
+
+          <h2 className="mt-4 text-4xl font-black text-slate-900">
+            Precios simples y{" "}
+            <span className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+              justos
+            </span>
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+            Empieza gratis y ahorra más pagando anual.
+          </p>
+
+          <div className="mt-6">
+            <BillingToggle billing={billing} setBilling={setBilling} />
+          </div>
         </div>
 
-        {/* PRICING CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* CARDS */}
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
           {plans.map((plan) => (
-            <PricingCard key={plan.id} {...plan} />
+            <PricingCard key={plan.id} plan={plan} billing={billing} />
           ))}
         </div>
 
-        {/* BOTTOM CTA */}
-        <div className="text-center mt-16">
-          <p className="text-gray-600 mb-4">💡 ¿No estás seguro? Prueba gratis el plan Free</p>
-          <p className="text-sm text-gray-500">Todos los planes incluyen soporte y acceso a nuevas funciones</p>
+        {/* FOOTER */}
+        <div className="mt-10 text-center">
+          <p className="text-sm text-slate-600">
+            💡 Puedes cambiar de plan o facturación en cualquier momento.
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-interface PricingCardProps {
-  id: string;
-  name: string;
-  icon: string;
-  monthly: number;
-  transactionFee?: number;
-  description: string;
-  tagline: string;
-  features: string[];
-  highlight: boolean;
-  popular?: boolean;
-  cta: string;
+/* =========================
+   BILLING TOGGLE
+========================= */
+
+function BillingToggle({
+  billing,
+  setBilling,
+}: {
+  billing: "monthly" | "annual";
+  setBilling: (v: "monthly" | "annual") => void;
+}) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full bg-white p-1 shadow-sm">
+      <button
+        onClick={() => setBilling("monthly")}
+        className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
+          billing === "monthly"
+            ? "bg-slate-900 text-white"
+            : "text-slate-500"
+        }`}
+      >
+        Mensual
+      </button>
+
+      <button
+        onClick={() => setBilling("annual")}
+        className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
+          billing === "annual"
+            ? "bg-slate-900 text-white"
+            : "text-slate-500"
+        }`}
+      >
+        Anual
+        <span className="ml-1 text-xs font-semibold text-green-600">
+          -20%
+        </span>
+      </button>
+    </div>
+  );
 }
 
+/* =========================
+   CARD
+========================= */
+
 function PricingCard({
-  id,
-  name,
-  icon,
-  monthly,
-  transactionFee,
-  description,
-  tagline,
-  features,
-  highlight,
-  popular,
-  cta,
-}: PricingCardProps) {
+  plan,
+  billing,
+}: {
+  plan: any;
+  billing: "monthly" | "annual";
+}) {
+  const Icon = plan.icon;
+  const isFree = plan.monthly === 0;
+
+  const monthlyPrice = plan.monthly;
+  const annualPrice = plan.monthly * 12 * (1 - ANNUAL_DISCOUNT);
+  const savings = monthlyPrice * 12 - annualPrice;
+
   return (
     <div
       className={`
-        relative rounded-2xl transition-all duration-300
-        ${highlight
-          ? "border-2 border-purple-500 shadow-2xl shadow-purple-200 scale-[1.02] bg-gradient-to-br from-purple-50 to-white"
-          : "border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 bg-white"
+        relative rounded-3xl transition-all
+        ${
+          plan.highlight
+            ? "border-2 border-indigo-500 bg-white shadow-[0_25px_80px_rgba(79,70,229,0.25)]"
+            : "border border-slate-200 bg-white shadow-md hover:-translate-y-1 hover:shadow-lg"
         }
       `}
     >
-      {/* POPULAR BADGE */}
-      {popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="inline-block bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-            🌟 Más Popular
+      {plan.popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="rounded-full bg-indigo-600 px-3 py-0.5 text-xs font-semibold text-white">
+            ⭐ Más popular
           </span>
         </div>
       )}
 
-      {/* CONTENT */}
-      <div className="p-8 h-full flex flex-col">
+      <div className="flex h-full flex-col p-6">
         {/* HEADER */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-4xl">{icon}</span>
+        <div className="mb-4">
+          <div className="mb-2 flex items-center gap-3">
+            <div
+              className={`rounded-xl p-2 ${
+                plan.highlight
+                  ? "bg-indigo-100 text-indigo-700"
+                  : "bg-slate-100 text-slate-600"
+              }`}
+            >
+              <Icon size={22} />
+            </div>
+
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">{name}</h3>
-              <p className="text-xs text-gray-600">{description}</p>
+              <h3 className="text-xl font-bold text-slate-900">
+                {plan.name}
+              </h3>
+              <p className="text-xs text-slate-600">
+                {plan.description}
+              </p>
             </div>
           </div>
-          <p className="text-sm italic text-gray-700 bg-gray-50 p-3 rounded-lg">
-            "{tagline}"
+
+          <p className="rounded-md bg-slate-50 px-3 py-2 text-xs italic text-slate-600">
+            “{plan.tagline}”
           </p>
         </div>
 
         {/* PRICE */}
-        <div className="mb-6">
-          {monthly === 0 ? (
-            <p className="text-4xl font-extrabold text-gray-900">Gratis</p>
-          ) : (
+        <div className="mb-5">
+          {isFree ? (
+            <p className="text-3xl font-extrabold text-slate-900">
+              Gratis
+            </p>
+          ) : billing === "annual" ? (
             <>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-                  ${monthly}
+                <span className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+                  ${(annualPrice / 12).toFixed(2)}
                 </span>
-                <span className="text-gray-600">/mes</span>
+                <span className="text-sm text-slate-600">/mes</span>
               </div>
-              {transactionFee !== undefined && (
-                <p className="text-sm text-gray-600 mt-2">
-                  + ${transactionFee.toFixed(2)} por venta
-                </p>
-              )}
+              <p className="mt-1 text-xs font-medium text-green-600">
+                Pagas ${annualPrice.toFixed(2)} al año · Ahorras $
+                {savings.toFixed(2)}
+              </p>
             </>
+          ) : (
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+                ${monthlyPrice.toFixed(2)}
+              </span>
+              <span className="text-sm text-slate-600">/mes</span>
+            </div>
           )}
         </div>
 
         {/* FEATURES */}
-        <ul className="space-y-3 mb-8 flex-grow">
-          {features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="mt-1 flex-shrink-0">
-                {feature.startsWith("✅") ? (
-                  <Check size={16} className="text-green-600 font-bold" />
+        <ul className="mb-6 flex-grow space-y-2">
+          {plan.features.map((feature: any, idx: number) => {
+            const FeatureIcon = feature.icon;
+            return (
+              <li
+                key={idx}
+                className={`flex gap-2 text-sm ${
+                  feature.available
+                    ? "text-slate-800"
+                    : "text-slate-400 line-through"
+                }`}
+              >
+                {feature.available ? (
+                  <Check size={14} className="mt-0.5 text-green-600" />
                 ) : (
-                  <span className="text-gray-400">✗</span>
+                  <Lock size={14} className="mt-0.5 text-slate-400" />
                 )}
-              </span>
-              <span className={feature.startsWith("❌") ? "text-gray-400 line-through" : ""}>
-                {feature.replace("✅ ", "").replace("❌ ", "")}
-              </span>
-            </li>
-          ))}
+                <span>
+                  {FeatureIcon && plan.highlight && (
+                    <FeatureIcon
+                      size={13}
+                      className="mr-1 inline text-indigo-600"
+                    />
+                  )}
+                  {feature.label}
+                </span>
+              </li>
+            );
+          })}
         </ul>
 
-        {/* CTA BUTTON */}
+        {/* CTA */}
         <Link
-          href={id === "free" ? "/register" : "/settings"}
+          href={plan.id === "free" ? "/register" : "/settings"}
           className={`
-            block text-center py-3 rounded-lg font-semibold transition-all duration-300
-            ${highlight
-              ? "bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:shadow-lg hover:-translate-y-1"
-              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+            block rounded-xl py-3 text-center text-sm font-semibold transition
+            ${
+              plan.highlight
+                ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white hover:shadow-lg"
+                : "bg-slate-100 text-slate-900 hover:bg-slate-200"
             }
           `}
         >
-          {cta}
+          {plan.cta}
         </Link>
       </div>
     </div>

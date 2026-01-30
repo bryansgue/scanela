@@ -45,15 +45,30 @@ export default function HomePage() {
 
 function FAQSection() {
   return (
-    <section id="faq" className="relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_60%)]" />
+    <section
+      id="faq"
+      className="
+        relative overflow-hidden
+        bg-gradient-to-b
+        from-slate-900
+        via-slate-950
+        to-black
+        py-24
+      "
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.18),_transparent_60%)]" />
+
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.6em] text-blue-300">FAQ MENÚ QR</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.6em] text-cyan-300">
+            FAQ MENÚ QR
+          </p>
+
           <h2 className="mt-4 text-4xl font-extrabold text-white">
             Preguntas frecuentes sobre cartas digitales y códigos QR
           </h2>
-          <p className="mt-3 text-base text-slate-300 max-w-3xl mx-auto">
+
+          <p className="mt-3 max-w-3xl mx-auto text-base text-slate-300">
             Resolvemos las dudas más habituales al digitalizar tu carta para buscadores y clientes.
           </p>
         </div>
@@ -62,18 +77,32 @@ function FAQSection() {
           {faqEntries.map((item, idx) => (
             <details
               key={item.question}
-              className="group rounded-3xl border border-white/5 bg-white/5 p-6 text-white shadow-[0_10px_60px_rgba(15,23,42,0.3)] backdrop-blur"
+              className="
+                group rounded-3xl
+                border border-white/10
+                bg-white/5
+                p-6
+                text-white
+                shadow-[0_10px_60px_rgba(2,6,23,0.6)]
+                backdrop-blur
+              "
             >
               <summary className="flex cursor-pointer items-center justify-between gap-4 text-left text-lg font-semibold">
                 <span>
-                  <span className="mr-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-300">
+                  <span className="mr-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-300">
                     {(idx + 1).toString().padStart(2, "0")}
                   </span>
                   {item.question}
                 </span>
-                <span className="rounded-full border border-white/20 p-2 text-sm text-blue-200 transition group-open:rotate-45">+</span>
+
+                <span className="rounded-full border border-white/20 p-2 text-sm text-indigo-200 transition group-open:rotate-45">
+                  +
+                </span>
               </summary>
-              <p className="mt-4 text-base leading-relaxed text-slate-200">{item.answer}</p>
+
+              <p className="mt-4 text-base leading-relaxed text-slate-200">
+                {item.answer}
+              </p>
             </details>
           ))}
         </div>
@@ -82,30 +111,58 @@ function FAQSection() {
   );
 }
 
+
 function CTASection() {
   return (
     <section className="relative overflow-hidden py-24">
-      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500" />
-      <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M60 0v120M0 60h120\" stroke=\"white\" stroke-opacity=\"0.08\" stroke-width=\"1\"/%3E%3C/svg%3E')" }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500" />
+      <div className="absolute inset-0 bg-black/20" />
+
+      <div
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage:
+            "url('data:image/svg+xml,%3Csvg width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M60 0v120M0 60h120\" stroke=\"white\" stroke-opacity=\"0.08\" stroke-width=\"1\"/%3E%3C/svg%3E')",
+        }}
+      />
+
       <div className="relative mx-auto max-w-5xl px-6 text-center text-white">
-        <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/70">IMPULSA TU RESTAURANTE</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/70">
+          IMPULSA TU RESTAURANTE
+        </p>
+
         <h2 className="mt-6 text-4xl sm:text-5xl font-black leading-tight">
           🚀 Cientos de restaurantes usan Scanela para vender más con menús QR interactivos
         </h2>
+
         <p className="mt-4 text-lg text-white/80">
-          Lanza tu carta digital, acepta pedidos y cobra sin depender de impresiones ni agencias. Entra gratis y escala cuando estés listo.
+          Lanza tu carta digital, acepta pedidos y cobra sin depender de impresiones ni agencias.
+          Entra gratis y escala cuando estés listo.
         </p>
 
         <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
           <Link
             href="/register"
-            className="inline-flex items-center justify-center rounded-2xl bg-white px-10 py-4 text-lg font-semibold text-purple-600 shadow-xl shadow-purple-900/40 transition hover:-translate-y-1 hover:shadow-2xl"
+            className="
+              inline-flex items-center justify-center
+              rounded-2xl bg-white
+              px-10 py-4 text-lg font-semibold
+              text-indigo-700
+              shadow-xl shadow-indigo-900/40
+              transition hover:-translate-y-1 hover:shadow-2xl
+            "
           >
             ✨ Crear menú gratis
           </Link>
+
           <Link
             href="#pricing"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/60 px-10 py-4 text-lg font-semibold text-white transition hover:bg-white/10"
+            className="
+              inline-flex items-center justify-center
+              rounded-2xl border border-white/60
+              px-10 py-4 text-lg font-semibold
+              text-white transition hover:bg-white/10
+            "
           >
             Ver planes
           </Link>
@@ -118,6 +175,7 @@ function CTASection() {
     </section>
   );
 }
+
 
 function Footer() {
   return (
