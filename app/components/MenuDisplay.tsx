@@ -9,7 +9,7 @@ export default function MenuDisplay({
   theme = 'orange',
   showFrame = true, // Mostrar marco iPhone
   onAddToCart, // Callback para agregar al carrito
-  businessPlan = 'ventas', // Plan del negocio
+  businessPlan = 'menu', // Plan del negocio
   templateIcon, // Icono de la plantilla (para landing)
   templateName, // Nombre de la plantilla (para landing)
   templateSubtitle, // Subtítulo de la plantilla (para landing)
@@ -21,7 +21,7 @@ export default function MenuDisplay({
   theme?: string;
   showFrame?: boolean;
   onAddToCart?: (product: any, sizeId?: number | null, combinationProductName?: string) => void;
-  businessPlan?: 'menu' | 'ventas';
+  businessPlan?: 'free' | 'menu' | 'ventas';
   templateIcon?: string;
   templateName?: string;
   templateSubtitle?: string;
@@ -239,18 +239,20 @@ export default function MenuDisplay({
               <div className="p-3 flex flex-col gap-2">
                 {/* Fila 1: Imagen + Info */}
                 <div className="flex gap-3">
-                  <div className="w-24 h-24 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-4xl shadow-md overflow-hidden bg-gray-300">
-                    {product.imageUrl ? (
-                      <img
-                        src={productImageSrc}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                        key={productImageSrc}
-                      />
-                    ) : (
-                      <div className="text-3xl">📷</div>
-                    )}
-                  </div>
+                  {businessPlan !== 'free' && (
+                    <div className="w-24 h-24 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-4xl shadow-md overflow-hidden bg-gray-300">
+                      {product.imageUrl ? (
+                        <img
+                          src={productImageSrc}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          key={productImageSrc}
+                        />
+                      ) : (
+                        <div className="text-3xl">📷</div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex-1 py-1 flex flex-col justify-between">
                     <div>
@@ -457,7 +459,9 @@ export default function MenuDisplay({
         {menu.businessHours && menu.businessHours.trim() ? (
           <p className="text-gray-500 text-xs mb-2">{menu.businessHours}</p>
         ) : null}
-        <p className="text-xs text-gray-400">Powered by <span className="font-semibold text-gray-600">Scanela</span> ✨</p>
+        {(businessPlan === 'free' || menu.showScanelaBranding !== false) && (
+          <p className="text-xs text-gray-400">Powered by <span className="font-semibold text-gray-600">Scanela</span> ✨</p>
+        )}
       </div>
     </>
   );

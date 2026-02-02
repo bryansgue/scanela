@@ -1015,18 +1015,41 @@ export default function DashboardPage() {
                   selected={selectedBusiness}
                   onSelect={setSelectedBusiness}
                   onAddBusiness={handleAddBusiness}
+                  onDeleteBusiness={handleDeleteBusiness}
                   canAddBusiness={!isDemo && businesses.length < maxBusinesses}
                   isDemo={isDemo}
                 />
 
                 {!isDemo && businesses.length < maxBusinesses && (
-                  <div className="mt-3 flex justify-center">
+                  <div className="mt-3 flex justify-center gap-2">
                     <button
                       onClick={handleAddBusiness}
                       className="inline-flex items-center gap-2 rounded-2xl border border-dashed border-blue-300 bg-white px-4 py-1 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50 transition"
                     >
                       <span aria-hidden>➕</span>
                       Agregar negocio
+                    </button>
+
+                    <button
+                      onClick={handleDeleteBusiness}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-dashed border-red-300 bg-white px-4 py-1 text-xs font-semibold text-red-600 shadow-sm hover:bg-red-50 transition"
+                      title="Eliminar este negocio"
+                    >
+                      <span aria-hidden>🗑️</span>
+                      Eliminar
+                    </button>
+                  </div>
+                )}
+
+                {!isDemo && businesses.length >= maxBusinesses && (
+                  <div className="mt-3 flex justify-center">
+                    <button
+                      onClick={handleDeleteBusiness}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-dashed border-red-300 bg-white px-4 py-1 text-xs font-semibold text-red-600 shadow-sm hover:bg-red-50 transition"
+                      title="Eliminar este negocio"
+                    >
+                      <span aria-hidden>🗑️</span>
+                      Eliminar
                     </button>
                   </div>
                 )}
@@ -1169,6 +1192,7 @@ export default function DashboardPage() {
                 theme={theme}
                 onThemeChange={setTheme}
                 onImageStorageEvent={registerImageStorageEvent}
+                businessPlan={userPlan || 'free'}
               />
             </div>
           </div>

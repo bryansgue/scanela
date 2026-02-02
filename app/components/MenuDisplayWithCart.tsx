@@ -10,7 +10,7 @@ interface MenuWithCartProps {
   menu: any;
   businessName: string;
   businessId: number;
-  businessPlan: "menu" | "ventas";
+  businessPlan: "free" | "menu" | "ventas";
   theme?: string;
   showFrame?: boolean;
 }

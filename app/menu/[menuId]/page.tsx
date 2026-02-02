@@ -15,13 +15,13 @@ type PublicMenuPayload = {
   menuData: any;
   businessName: string;
   businessId: number;
-  businessPlan: 'menu' | 'ventas';
+  businessPlan: 'free' | 'menu' | 'ventas';
   theme: string;
 };
 
-const determineBusinessPlan = (menuData: any): 'menu' | 'ventas' => {
+const determineBusinessPlan = (menuData: any): 'free' | 'menu' | 'ventas' => {
   const planFromMenu = menuData?.businessPlan || menuData?.plan;
-  if (planFromMenu === 'menu' || planFromMenu === 'ventas') {
+  if (planFromMenu === 'free' || planFromMenu === 'menu' || planFromMenu === 'ventas') {
     return planFromMenu;
   }
 
@@ -29,7 +29,7 @@ const determineBusinessPlan = (menuData: any): 'menu' | 'ventas' => {
     return 'ventas';
   }
 
-  return 'ventas';
+  return 'menu';
 };
 
 const getMenuById = cache(async (menuId: string): Promise<PublicMenuPayload | null> => {

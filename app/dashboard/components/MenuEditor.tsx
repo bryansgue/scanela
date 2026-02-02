@@ -49,6 +49,7 @@ export default function MenuEditor({
   onThemeChange,
   onSaveMenu,
   onImageStorageEvent,
+  businessPlan = 'free',
 }: {
   menu: any;
   onUpdate: (menu: any) => void;
@@ -59,6 +60,7 @@ export default function MenuEditor({
   onThemeChange?: (theme: string) => void;
   onSaveMenu?: () => Promise<boolean>;
   onImageStorageEvent?: (event: ImageStorageEvent) => void;
+  businessPlan?: string;
 }) {
   // Helper para obtener colores del tema
   const getThemeColors = (t: string) => {
@@ -494,39 +496,55 @@ export default function MenuEditor({
             </div>
 
             {/* Subtítulo del Menú */}
-            <div>
+            <div className={businessPlan === 'free' ? 'opacity-60' : ''}>
               <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
                 📝 Subtítulo del Menú
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
               </label>
               <input
                 type="text"
+                disabled={businessPlan === 'free'}
                 value={menu.menuSubtitle || 'Menú Digital QR'}
                 onChange={(e) => {
                   const newMenu = { ...menu, menuSubtitle: e.target.value };
                   onUpdate(newMenu);
                 }}
                 placeholder="Menú Digital QR"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold text-base bg-white hover:border-gray-300 transition-all duration-300"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold text-base bg-white hover:border-gray-300 transition-all duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
             {/* URL Personalizado */}
-            <div>
+            <div className={businessPlan === 'free' ? 'opacity-60' : ''}>
               <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
                 🔗 Mi URL Personalizado
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
               </label>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
+                <div className={`flex items-center gap-2 px-4 py-3 rounded-lg border ${
+                  businessPlan === 'free'
+                    ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
                   <span className="text-gray-600 text-sm font-medium">scanela.com/</span>
                   <input
                     type="text"
+                    disabled={businessPlan === 'free'}
                     value={menu.customSlug || ''}
                     onChange={(e) => {
                       const newMenu = { ...menu, customSlug: e.target.value };
                       onUpdate(newMenu);
                     }}
                     placeholder={businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
-                    className="flex-1 px-0 py-0 border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-800 font-semibold text-sm"
+                    className="flex-1 px-0 py-0 border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-800 font-semibold text-sm disabled:cursor-not-allowed"
                   />
                 </div>
                 <p className="text-xs text-gray-500">
@@ -546,8 +564,15 @@ export default function MenuEditor({
             </div>
 
             {/* Logo */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Logo del Restaurante</label>
+            <div className={businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}>
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                Logo del Restaurante
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
+              </label>
               <ImageUpload
                 currentImage={menu.businessLogo}
                 onImageChange={(url) => {
@@ -580,8 +605,15 @@ export default function MenuEditor({
             </div>
 
             {/* Modo de Logo */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Modo de visualización</label>
+            <div className={businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}>
+              <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                Modo de visualización
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
+              </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { value: 'logo-only', label: 'Solo Logo', icon: '🖼️' },
@@ -590,11 +622,12 @@ export default function MenuEditor({
                 ].map((option) => (
                   <button
                     key={option.value}
+                    disabled={businessPlan === 'free'}
                     onClick={() => {
                       const newMenu = { ...menu, logoMode: option.value };
                       onUpdate(newMenu);
                     }}
-                    className={`p-3 rounded-lg font-semibold text-sm transition-all ${
+                    className={`p-3 rounded-lg font-semibold text-sm transition-all disabled:cursor-not-allowed ${
                       menu.logoMode === option.value
                         ? 'bg-orange-500 text-white ring-2 ring-orange-600 shadow-md'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-150'
@@ -680,17 +713,31 @@ export default function MenuEditor({
               <p className="text-xs text-gray-500 mt-1">Ej: Lun-Vie: 10AM-10PM | Sáb-Dom: 12PM-11PM</p>
             </div>
 
-            {/* Sección Eliminar Restaurante */}
-            <div className="pt-4 border-t border-gray-100">
-              <label className="block text-sm font-bold text-red-600 mb-3">⚠️ Peligro</label>
-              <button
-                onClick={() => window.dispatchEvent(new Event('deleteBusinessName'))}
-                className="w-full px-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2"
-                title="Eliminar restaurante"
-              >
-                <Trash2 size={20} />
-                Eliminar Restaurante
-              </button>
+            {/* Mostrar branding de Scanela */}
+            <div className={businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}>
+              <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={menu.showScanelaBranding !== false}
+                  onChange={(e) => {
+                    const newMenu = { ...menu, showScanelaBranding: e.target.checked };
+                    onUpdate(newMenu);
+                  }}
+                  disabled={businessPlan === 'free'}
+                  className="w-4 h-4 cursor-pointer disabled:cursor-not-allowed"
+                />
+                ✨ Mostrar "Powered by Scanela"
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
+              </label>
+              <p className="text-xs text-gray-500">
+                {businessPlan === 'free' 
+                  ? 'En el plan Free siempre se muestra "Powered by Scanela"'
+                  : 'Desactiva esto para ocultar el branding de Scanela en tu menú'}
+              </p>
             </div>
           </div>
         )}
@@ -956,8 +1003,15 @@ export default function MenuEditor({
 
                           {/* Fila 1.5: Image Upload */}
                           {isProductExpanded(category.id, product.id) && (
-                            <div className="mb-5 pb-5 border-b border-gray-200">
-                              <p className="text-xs font-semibold text-gray-700 mb-2">Foto del Producto:</p>
+                            <div className={`mb-5 pb-5 border-b border-gray-200 ${businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}`}>
+                              <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                                Foto del Producto:
+                                {businessPlan === 'free' && (
+                                  <span className="text-xs text-gray-500 font-normal">
+                                    🔒 Available in Scanela Menú plan
+                                  </span>
+                                )}
+                              </p>
                               <ImageUpload
                                 currentImage={product.imageUrl}
                                 onImageChange={(url) => {

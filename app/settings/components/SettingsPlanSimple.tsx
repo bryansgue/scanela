@@ -64,23 +64,30 @@ const PLANS: Plan[] = [
       { name: "Diseño responsive", included: true },
       { name: "Crear y editar productos", included: true },
       { name: "URL estándar de Scanela", included: true },
+      { name: "URL personalizada", included: false },
       { name: "Imágenes de productos", included: false },
       { name: "Productos destacados", included: false },
-      { name: "Orden manual de productos", included: false },
+      { name: "Reordenar productos y categorías", included: false },
       { name: "Logo del negocio", included: false },
-      { name: "Colores personalizados", included: false },
+      { name: "Colores personalizados del menú", included: false },
+      { name: "Menú sin marca Scanela", included: false },
     ],
   },
   {
     id: "menu",
-  name: "Scanela Menus",
+    name: "Scanela Menú",
     icon: "📋",
     priceMonthly: 4.99,
     priceAnnual: 49.9,
-    description: "Para restaurantes que quieren un menú digital profesional",
-    message: "Comparte tu menú por QR, sin imprimir",
+    description: "Es tu menú, con tu marca",
+    message: "Control total y apariencia profesional",
+    popular: true,
     features: [
-      { name: "Todo lo del plan Free", included: true },
+      { name: "Menú digital accesible por QR", included: true },
+      { name: "Actualización del menú en tiempo real", included: true },
+      { name: "Diseño responsive", included: true },
+      { name: "Crear y editar productos", included: true },
+      { name: "URL estándar de Scanela", included: true },
       { name: "URL personalizada", included: true },
       { name: "Imágenes de productos", included: true },
       { name: "Productos destacados", included: true },
@@ -838,7 +845,7 @@ export default function SettingsPlan() {
                   setSelectedPlan(null);
                 }}
                 className={`text-2xl leading-none text-gray-400 hover:text-gray-600 ${BUTTON_FEEDBACK_CLASSES}`}
-                aria-name="Cerrar"
+                aria-label="Cerrar"
               >
                 ×
               </button>

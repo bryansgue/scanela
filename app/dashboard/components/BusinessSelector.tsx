@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 
 export default function BusinessSelector({
   businesses,
   selected,
   onSelect,
   onAddBusiness,
+  onDeleteBusiness,
   canAddBusiness,
   isDemo,
 }: {
@@ -15,6 +16,7 @@ export default function BusinessSelector({
   selected: any;
   onSelect: (b: any) => void;
   onAddBusiness?: () => void;
+  onDeleteBusiness?: () => void;
   canAddBusiness: boolean;
   isDemo: boolean;
 }) {
@@ -87,25 +89,44 @@ export default function BusinessSelector({
               </button>
             ))}
 
-            {/* Agregar negocio */}
-            <button
-              onClick={() => {
-                if (onAddBusiness) {
-                  onAddBusiness();
-                  setIsOpen(false);
-                }
-              }}
-              disabled={!canAddBusiness}
-              className={`w-full flex items-center gap-2 px-4 py-3 transition-all duration-200 border-t border-gray-100 ${
-                canAddBusiness
-                  ? 'hover:bg-blue-50 text-blue-600 hover:text-blue-700 font-semibold cursor-pointer'
-                  : 'text-gray-400 cursor-not-allowed bg-gray-50'
-              }`}
-              title={isDemo ? 'Disponible al activar tu plan' : ''}
-            >
-              <Plus size={18} />
-              <span className="font-medium">Agregar nuevo negocio</span>
-            </button>
+            {/* Agregar y Eliminar negocio - lado a lado */}
+            <div className="flex gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50">
+              {canAddBusiness && !isDemo && (
+                <button
+                  onClick={() => {
+                    if (onAddBusiness) {
+                      onAddBusiness();
+                      setIsOpen(false);
+                    }
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 font-semibold cursor-pointer py-2 transition-all duration-200"
+                  title="Agregar un nuevo negocio"
+                >
+                  <Plus size={18} />
+                  <span className="font-medium">Agregar</span>
+                </button>
+              )}
+
+              {!isDemo && (
+                <button
+                  onClick={() => {
+                    if (onDeleteBusiness) {
+                      onDeleteBusiness();
+                      setIsOpen(false);
+                    }
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-lg font-semibold cursor-pointer py-2 transition-all duration-200 ${
+                    canAddBusiness
+                      ? 'bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700'
+                      : 'bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-800'
+                  }`}
+                  title="Eliminar este negocio"
+                >
+                  <Trash2 size={18} />
+                  <span className="font-medium">Eliminar</span>
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
