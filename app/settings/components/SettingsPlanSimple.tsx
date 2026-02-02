@@ -59,16 +59,16 @@ const PLANS: Plan[] = [
     description: "Prueba sin límite de tiempo",
     message: "Diseña tu menú completamente gratis",
     features: [
-      { name: "Editor intuitivo de productos", included: true },
-      { name: "Preview en tiempo real", included: true },
-      { name: "1 negocio activo", included: true },
-      { name: "Sin límite de categorías y productos", included: true },
-      { name: "12 temas de color personalizables", included: true },
-      { name: "Logo del negocio personalizado", included: true },
-      { name: "❌ QR BLOQUEADO", included: false },
-      { name: "Link público de compartir", included: false },
-      { name: "Integración WhatsApp", included: false },
-      { name: "Sistema de órdenes y pagos", included: false },
+      { name: "Menú digital accesible por QR", included: true },
+      { name: "Actualización del menú en tiempo real", included: true },
+      { name: "Diseño responsive", included: true },
+      { name: "Crear y editar productos", included: true },
+      { name: "URL estándar de Scanela", included: true },
+      { name: "Imágenes de productos", included: false },
+      { name: "Productos destacados", included: false },
+      { name: "Orden manual de productos", included: false },
+      { name: "Logo del negocio", included: false },
+      { name: "Colores personalizados", included: false },
     ],
   },
   {
@@ -80,17 +80,14 @@ const PLANS: Plan[] = [
     description: "Para restaurantes que quieren un menú digital profesional",
     message: "Comparte tu menú por QR, sin imprimir",
     features: [
-      { name: "✅ QR Descargable e Imprimible", included: true },
-      { name: "Editor intuitivo de productos", included: true },
-      { name: "Preview en tiempo real (simulador móvil)", included: true },
-      { name: "Hasta 3 negocios activos", included: true },
-      { name: "Sin límite de categorías y productos", included: true },
-      { name: "12 temas de color personalizables", included: true },
-      { name: "Logo del negocio personalizado", included: true },
-      { name: "Integración WhatsApp", included: true },
-      { name: "Analytics básicos", included: true },
-      { name: "Soporte por email", included: true },
-      { name: "Sistema de órdenes y pagos", included: false },
+      { name: "Todo lo del plan Free", included: true },
+      { name: "URL personalizada", included: true },
+      { name: "Imágenes de productos", included: true },
+      { name: "Productos destacados", included: true },
+      { name: "Reordenar productos y categorías", included: true },
+      { name: "Logo del negocio", included: true },
+      { name: "Colores personalizados del menú", included: true },
+      { name: "Menú sin marca Scanela", included: true },
     ],
   },
   {
@@ -140,12 +137,12 @@ const BUSINESS_LIMITS: Record<UserPlan, string> = {
   ventas: "1 / 5",
 };
 
-const INTERVAL_OPTIONS: { id: BillingInterval; label: string; helper: string }[] = [
-  { id: "monthly", label: "Mensual", helper: "Paga mes a mes" },
-  { id: "annual", label: "Anual", helper: "Ahorra 2 meses" },
+const INTERVAL_OPTIONS: { id: BillingInterval; name: string; helper: string }[] = [
+  { id: "monthly", name: "Mensual", helper: "Paga mes a mes" },
+  { id: "annual", name: "Anual", helper: "Ahorra 2 meses" },
 ];
 
-const STATUS_LABELS: Record<string, string> = {
+const STATUS_nameS: Record<string, string> = {
   active: "Activa",
   trialing: "En prueba",
   past_due: "Pago pendiente",
@@ -163,31 +160,31 @@ const ACTIVE_SUBSCRIPTION_STATUSES = new Set([
 
 const PAYMENT_METHODS: {
   id: PaymentMethod;
-  label: string;
+  name: string;
   description: string;
   icon: typeof CreditCard;
-  available: boolean;
+  included: boolean;
 }[] = [
   {
     id: "stripe",
-    label: "Tarjeta débito o crédito",
+    name: "Tarjeta débito o crédito",
     description: "Procesado por Stripe (incluye Google Pay / Apple Pay).",
     icon: CreditCard,
-    available: true,
+    included: true,
   },
   {
     id: "paypal",
-    label: "PayPal",
+    name: "PayPal",
     description: "Paga con tu saldo o tarjeta guardada en PayPal.",
     icon: Wallet,
-    available: true,
+    included: true,
   },
   {
     id: "bank",
-    label: "Transferencia Banco Pichincha / Deuna",
+    name: "Transferencia Banco Pichincha / Deuna",
     description: "Paga con la app Deuna y envía tu comprobante.",
     icon: Banknote,
-    available: true,
+    included: true,
   },
 ];
 
@@ -626,7 +623,7 @@ export default function SettingsPlan() {
                 </div>
                 <p className="text-xl font-semibold text-gray-900">
                   {displayStatus
-                    ? STATUS_LABELS[displayStatus] || displayStatus
+                    ? STATUS_nameS[displayStatus] || displayStatus
                     : "Sin suscripción"}
                 </p>
                 <p className="text-xs text-gray-500">{formatInterval(displayBillingPeriod)}</p>
@@ -668,7 +665,7 @@ export default function SettingsPlan() {
                       transition={{ type: "spring", stiffness: 380, damping: 32 }}
                     />
                   )}
-                  <span className="relative z-10 block font-semibold">{option.label}</span>
+                  <span className="relative z-10 block font-semibold">{option.name}</span>
                   <span
                     className={`relative z-10 text-xs font-normal ${
                       isActive ? "text-indigo-500" : "text-indigo-300"
@@ -682,12 +679,14 @@ export default function SettingsPlan() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {PLANS.map((plan) => {
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+          {PLANS.filter((plan) => plan.id !== "ventas").map((plan) => {
             const isCurrent = plan.id === effectivePlan;
-            const displayPrice =
-              billingInterval === "monthly" ? plan.priceMonthly : plan.priceAnnual;
-            const priceSuffix = billingInterval === "monthly" ? "/mes" : "/año";
+            const monthlyPrice = plan.priceMonthly;
+            const annualPrice = plan.priceMonthly * 12 * 0.8; // 20% descuento
+            const savings = monthlyPrice * 12 - annualPrice;
+            const displayPrice = billingInterval === "monthly" ? monthlyPrice : annualPrice / 12;
+            const priceSuffix = "/mes";
             return (
               <div
                 key={plan.id}
@@ -715,11 +714,24 @@ export default function SettingsPlan() {
                   </div>
                   <p className="mb-2 text-xs text-gray-600">{plan.description}</p>
                   <p className="mb-4 text-sm font-semibold text-gray-700 italic">“{plan.message}”</p>
-                  <div className="mb-4 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">
-                      {displayPrice === 0 ? "$0" : `$${displayPrice.toFixed(2)}`}
-                    </span>
-                    <span className="text-xs text-gray-600">{priceSuffix}</span>
+                  <div className="mb-4">
+                    {monthlyPrice === 0 ? (
+                      <span className="text-3xl font-bold text-gray-900">Gratis</span>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+                            ${displayPrice.toFixed(2)}
+                          </span>
+                          <span className="text-xs text-gray-600">{priceSuffix}</span>
+                        </div>
+                        {billingInterval === "annual" && (
+                          <p className="mt-1 text-xs font-medium text-green-600">
+                            Pagas ${annualPrice.toFixed(2)} al año · Ahorras ${savings.toFixed(2)}
+                          </p>
+                        )}
+                      </>
+                    )}
                   </div>
                   {plan.transactionFee !== undefined && (
                     <p className="mb-4 text-xs text-gray-600">
@@ -826,7 +838,7 @@ export default function SettingsPlan() {
                   setSelectedPlan(null);
                 }}
                 className={`text-2xl leading-none text-gray-400 hover:text-gray-600 ${BUTTON_FEEDBACK_CLASSES}`}
-                aria-label="Cerrar"
+                aria-name="Cerrar"
               >
                 ×
               </button>
@@ -839,9 +851,9 @@ export default function SettingsPlan() {
                 return (
                   <button
                     key={method.id}
-                    onClick={() => method.available && setSelectedPaymentMethod(method.id)}
+                    onClick={() => method.included && setSelectedPaymentMethod(method.id)}
                     className={`flex w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition ${BUTTON_FEEDBACK_CLASSES} ${
-                      method.available
+                      method.included
                         ? isSelected
                           ? "border-indigo-500 bg-indigo-50"
                           : "border-gray-200 hover:border-indigo-200"
@@ -850,7 +862,7 @@ export default function SettingsPlan() {
                   >
                     <span
                       className={`flex h-12 w-12 items-center justify-center rounded-xl text-white ${
-                        method.available ? "bg-indigo-500" : "bg-gray-300"
+                        method.included ? "bg-indigo-500" : "bg-gray-300"
                       }`}
                     >
                       <Icon size={22} />
@@ -858,10 +870,10 @@ export default function SettingsPlan() {
                     <div className="flex-1">
                       <p
                         className={`font-semibold ${
-                          method.available ? "text-gray-900" : "text-gray-500"
+                          method.included ? "text-gray-900" : "text-gray-500"
                         }`}
                       >
-                        {method.label}
+                        {method.name}
                       </p>
                       <p className="text-sm text-gray-500">{method.description}</p>
                     </div>
@@ -870,7 +882,7 @@ export default function SettingsPlan() {
                         Recomendado
                       </span>
                     )}
-                    {!method.available && (
+                    {!method.included && (
                       <span className="text-xs font-semibold uppercase text-gray-400">
                         Pronto
                       </span>
