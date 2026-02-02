@@ -421,7 +421,7 @@
             "name": "Vainilla",
             "description": "Helado de vainilla pura de Madagascar",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Heladeria/Helados/Vainilla.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -438,7 +438,7 @@
             "name": "Chocolate Belga",
             "description": "Helado de chocolate belga oscuro artesanal",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Heladeria/Helados/Chocolate.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -455,7 +455,7 @@
             "name": "Fresa",
             "description": "Helado de fresa fresca de la estación",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Heladeria/Helados/Fresa.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -472,7 +472,7 @@
             "name": "Pistacho Premium",
             "description": "Helado de pistacho siciliano premium",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Heladeria/Helados/Pistacho.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -489,7 +489,7 @@
             "name": "Menta Chocolate",
             "description": "Helado de menta fresca con chips de chocolate",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Heladeria/Helados/Menta.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -606,7 +606,7 @@
             "name": "Tabla de Quesos y Jamones",
             "description": "Selección premium de quesos europeos y jamones ibéricos",
             "price": 16.99,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Restaurant/Entradas/tablita.webp",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
@@ -616,7 +616,7 @@
             "name": "Camarones al Ajillo",
             "description": "Camarones frescos salteados en aceite con ajo",
             "price": 13.99,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Restaurant/Entradas/camarones.webp",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
@@ -626,7 +626,7 @@
             "name": "Tabla de Sushi Mixta",
             "description": "Variedad de sushi fresco con 15 piezas surtidas",
             "price": 18.99,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Restaurant/Entradas/sushi.webp",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
@@ -636,7 +636,7 @@
             "name": "Tabla de Frutos del Mar",
             "description": "Ostras, mejillones y vieiras frescos",
             "price": 19.99,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Restaurant/Entradas/tablita_mar.webp",
             "active": true,
             "hasVariants": false,
             "variants": { "sizes": [] }
@@ -842,7 +842,7 @@
             "name": "Burger Clásica",
             "description": "Pan casero, carne 100% res, lechuga, tomate y cebolla",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Hamburguers/Clasicas/clasica.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -858,7 +858,7 @@
             "name": "Burger Bacon & Queso",
             "description": "Con bacon crujiente y queso cheddar fundido",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Hamburguers/Clasicas/Bacon.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
@@ -874,7 +874,7 @@
             "name": "Burger Deluxe",
             "description": "Queso doble, cebolla caramelizada, champiñones y huevo",
             "price": 0,
-            "imageUrl": "",
+            "imageUrl": "https://rjkzfxhaeakfpfylxjii.supabase.co/storage/v1/object/public/images_public/Plantillas/Hamburguers/Clasicas/deluxe.webp",
             "active": true,
             "hasVariants": true,
             "variants": {
