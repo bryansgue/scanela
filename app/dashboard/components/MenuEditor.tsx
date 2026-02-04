@@ -531,7 +531,7 @@ export default function MenuEditor({
                   <span className="text-gray-600 text-sm font-medium">scanela.com/</span>
                   {businessPlan === 'free' ? (
                     <span className="flex-1 px-0 py-0 text-gray-800 font-semibold text-sm">
-                      menu-{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                      {businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
                     </span>
                   ) : (
                     <input
@@ -554,12 +554,12 @@ export default function MenuEditor({
                 </p>
                 {businessPlan === 'free' && (
                   <a
-                    href={`https://scanela.com/menu-${businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
+                    href={`https://scanela.com/${businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                   >
-                    🔗 Visitar: scanela.com/menu-{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                    🔗 Visitar: scanela.com/{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
                   </a>
                 )}
                 {businessPlan !== 'free' && menu.customSlug && (
@@ -570,6 +570,16 @@ export default function MenuEditor({
                     className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                   >
                     🔗 Visitar: scanela.com/{menu.customSlug}
+                  </a>
+                )}
+                {businessPlan !== 'free' && !menu.customSlug && (
+                  <a
+                    href={`https://scanela.com/${businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    🔗 Visitar: scanela.com/{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
                   </a>
                 )}
               </div>

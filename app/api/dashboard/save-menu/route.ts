@@ -102,11 +102,11 @@ export async function POST(request: NextRequest) {
       // Determinar custom_slug basado en el plan
       let customSlug: string | null = null;
       if (userPlan === 'free') {
-        // Plan free: usar automáticamente menu-[nombreDelNegocio]
-        customSlug = `menu-${businessName.toLowerCase().replace(/\s+/g, '-')}`;
+        // Plan free: usar automáticamente [nombreDelNegocio] formateado
+        customSlug = businessName.toLowerCase().replace(/\s+/g, '-');
       } else {
-        // Plan menu: usar el customSlug que el usuario ingresó
-        customSlug = menuData?.customSlug ? menuData.customSlug.toLowerCase().trim() : null;
+        // Plan menu: usar el customSlug que el usuario ingresó o el nombre del negocio como fallback
+        customSlug = menuData?.customSlug ? menuData.customSlug.toLowerCase().trim() : businessName.toLowerCase().replace(/\s+/g, '-');
       }
 
       // Datos que queremos guardar
