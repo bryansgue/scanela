@@ -90,13 +90,32 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: existingMenusError.message }, { status: 500 });
       }
 
+      // Obtener el plan del usuario desde la tabla profiles
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('stripe_subscription_status, plan')
+        .eq('id', user.id)
+        .single();
+
+      const userPlan = (profile?.stripe_subscription_status === 'active' || profile?.plan === 'menu') ? 'menu' : 'free';
+
+      // Determinar custom_slug basado en el plan
+      let customSlug: string | null = null;
+      if (userPlan === 'free') {
+        // Plan free: usar automáticamente menu-[nombreDelNegocio]
+        customSlug = `menu-${businessName.toLowerCase().replace(/\s+/g, '-')}`;
+      } else {
+        // Plan menu: usar el customSlug que el usuario ingresó
+        customSlug = menuData?.customSlug ? menuData.customSlug.toLowerCase().trim() : null;
+      }
+
       // Datos que queremos guardar
       const newData = {
         business_id: normalized.queryValue,
         business_name: businessName,
         theme: theme,
         menu_data: menuData,
-        custom_slug: menuData?.customSlug ? menuData.customSlug.toLowerCase().trim() : null,
+        custom_slug: customSlug,
       };
 
       // Si existe, comparar si hay cambios reales

@@ -28,7 +28,7 @@ export default function MenuDisplay({
   autoSelectFirstSize?: boolean;
   autoSelectVariantOrder?: number[];
 }) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<{ [key: number]: number | null }>({});
   const [enabledCombinations, setEnabledCombinations] = useState<{ [key: string]: boolean }>({});
   const [selectedCombinationOptions, setSelectedCombinationOptions] = useState<{ [key: string]: Set<string> }>({});
@@ -101,11 +101,108 @@ export default function MenuDisplay({
       rose: { header: 'from-rose-500 to-rose-600', light: 'bg-rose-100', text: 'text-rose-600', btn: 'bg-rose-500', border: 'border-rose-100', gradientRgba: 'rgba(244, 63, 94, 0.08)' },
       teal: { header: 'from-teal-500 to-teal-600', light: 'bg-teal-100', text: 'text-teal-600', btn: 'bg-teal-500', border: 'border-teal-100', gradientRgba: 'rgba(20, 184, 166, 0.08)' },
     };
+    
+    // Si es un color HEX personalizado
+    if (t && t.startsWith('#')) {
+      const hexColor = t;
+      // Convertir HEX a RGB para gradiente y rgba
+      const r = parseInt(hexColor.slice(1, 3), 16);
+      const g = parseInt(hexColor.slice(3, 5), 16);
+      const b = parseInt(hexColor.slice(5, 7), 16);
+      const rgbaColor = `rgba(${r}, ${g}, ${b}, 0.08)`;
+      const borderRgba = `rgba(${r}, ${g}, ${b}, 0.15)`; // Borde con baja opacidad como border-[color]-100
+      
+      return {
+        header: 'from-custom-color to-custom-color',
+        light: 'bg-custom-light',
+        text: 'text-custom-text',
+        btn: 'bg-custom-btn',
+        border: 'border-custom-border',
+        gradientRgba: rgbaColor,
+        // Agregamos propiedades adicionales para colores custom
+        customHex: hexColor,
+        customRgba: `rgb(${r}, ${g}, ${b})`,
+        customBorderColor: borderRgba, // Borde con baja opacidad
+      };
+    }
+    
     return themes[t] || themes['orange'];
   };
 
   const colors = getThemeColors(theme);
-  const selectedCategory = menu.categories?.find((c: any) => c.id === selectedCategoryId);
+  
+  // Función auxiliar para obtener estilos de botón con color personalizado
+  const getButtonStyle = () => {
+    if ((colors as any).customHex) {
+      return { backgroundColor: (colors as any).customRgba, color: 'white' };
+    }
+    return undefined;
+  };
+
+  // Función auxiliar para obtener clase de botón o style
+  const getButtonClasses = () => {
+    if ((colors as any).customHex) {
+      return 'text-white shadow-md';
+    }
+    return `${colors.btn} text-white shadow-md`;
+  };
+
+  // Función auxiliar para obtener estilos de border con color personalizado
+  const getBorderStyle = () => {
+    if ((colors as any).customHex) {
+      return { borderColor: (colors as any).customBorderColor };
+    }
+    return undefined;
+  };
+
+  // Función auxiliar para obtener clase de border o style
+  const getBorderClasses = () => {
+    if ((colors as any).customHex) {
+      return '';
+    }
+    return colors.border;
+  };
+
+  // Función auxiliar para obtener estilos de texto con color personalizado
+  const getTextStyle = () => {
+    if ((colors as any).customHex) {
+      return { color: (colors as any).customRgba };
+    }
+    return undefined;
+  };
+
+  // Función auxiliar para obtener clase de texto o style
+  const getTextClasses = () => {
+    if ((colors as any).customHex) {
+      return '';
+    }
+    return colors.text;
+  };
+  
+  // Crear categoría de productos destacados dinámicamente si está habilitada
+  const categoriesWithFeatured = menu.enableFeaturedProducts && menu.categories
+    ? [
+        {
+          id: 'featured',
+          name: '⭐ Destacados',
+          products: menu.categories
+            .flatMap((cat: any) => cat.products || [])
+            .filter((p: any) => p.featured),
+        } as any,
+        ...menu.categories,
+      ]
+    : menu.categories;
+
+  const selectedCategory = categoriesWithFeatured?.find((c: any) => c.id === selectedCategoryId);
+  
+  // Si la categoría seleccionada es 'featured' pero no hay productos destacados, cambiar a la primera categoría
+  useEffect(() => {
+    if (selectedCategoryId === 'featured' && selectedCategory?.products?.length === 0) {
+      if (menu.categories && menu.categories.length > 0) {
+        setSelectedCategoryId(menu.categories[0].id);
+      }
+    }
+  }, [menu.enableFeaturedProducts, menu.categories, selectedCategoryId, selectedCategory?.products?.length]);
 
   const getProductPrice = (product: any, sizeId?: number | null, combinationKey?: string) => {
     if (!product.hasVariants || !sizeId) {
@@ -131,7 +228,14 @@ export default function MenuDisplay({
   const menuContent = (
     <>
       {/* Header */}
-      <div className={`bg-gradient-to-r ${colors.header} text-white flex-shrink-0 flex items-center justify-between gap-4 h-24 overflow-hidden px-4`}>
+      <div 
+        className={`text-white flex-shrink-0 flex items-center justify-between gap-4 h-24 overflow-hidden px-4 ${!((colors as any).customHex) ? `bg-gradient-to-r ${colors.header}` : ''}`}
+        style={
+          (colors as any).customHex 
+            ? { background: `linear-gradient(to right, ${(colors as any).customRgba}, ${(colors as any).customRgba})` }
+            : undefined
+        }
+      >
         {/* Mostrar icono y nombre de plantilla si está disponible (para landing) */}
         {templateIcon && templateName && (
           <>
@@ -186,6 +290,33 @@ export default function MenuDisplay({
               <div className="text-center">
                 <h1 className="font-bold text-lg">{businessName}</h1>
                 <p className="text-xs opacity-75">{menu.menuSubtitle || 'Menú Digital QR'}</p>
+                {/* Redes Sociales */}
+                {menu.enableSocialLinks && menu.socialLinks && Object.values(menu.socialLinks).some((s: any) => s?.enabled) && (
+                  <div className="flex justify-center gap-2 mt-2">
+                    {[
+                      { key: 'facebook', icon: '/facebook.svg', label: 'Facebook' },
+                      { key: 'instagram', icon: '/instagram.svg', label: 'Instagram' },
+                      { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok' },
+                      { key: 'x', icon: '/x.svg', label: 'X' },
+                      { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp' },
+                    ].map((social) => {
+                      const socialData = menu.socialLinks?.[social.key];
+                      if (!socialData?.enabled) return null;
+                      return (
+                        <a
+                          key={social.key}
+                          href={socialData.url || '#'}
+                          target={socialData.url ? '_blank' : undefined}
+                          rel={socialData.url ? 'noopener noreferrer' : undefined}
+                          title={social.label}
+                          className="w-6 h-6 inline-flex items-center justify-center transition-all hover:scale-125 opacity-80 hover:opacity-100"
+                        >
+                          <img src={social.icon} alt={social.label} className="w-full h-full object-contain filter brightness-0 invert" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -195,23 +326,54 @@ export default function MenuDisplay({
           <div className="text-center">
             <h1 className="font-bold text-lg">{businessName}</h1>
             <p className="text-xs opacity-75">{menu.menuSubtitle || 'Menú Digital QR'}</p>
+            {/* Redes Sociales */}
+            {menu.enableSocialLinks && menu.socialLinks && Object.values(menu.socialLinks).some((s: any) => s?.enabled) && (
+              <div className="flex justify-center gap-2 mt-2">
+                {[
+                  { key: 'facebook', icon: '/facebook.svg', label: 'Facebook' },
+                  { key: 'instagram', icon: '/instagram.svg', label: 'Instagram' },
+                  { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok' },
+                  { key: 'x', icon: '/x.svg', label: 'X' },
+                  { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp' },
+                ].map((social) => {
+                  const socialData = menu.socialLinks?.[social.key];
+                  if (!socialData?.enabled) return null;
+                  return (
+                    <a
+                      key={social.key}
+                      href={socialData.url || '#'}
+                      target={socialData.url ? '_blank' : undefined}
+                      rel={socialData.url ? 'noopener noreferrer' : undefined}
+                      title={social.label}
+                      className="w-6 h-6 inline-flex items-center justify-center transition-all hover:scale-125 opacity-80 hover:opacity-100"
+                    >
+                      <img src={social.icon} alt={social.label} className="w-full h-full object-contain filter brightness-0 invert" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Categorías */}
-      {menu.categories && menu.categories.length > 0 && (
-        <div className={`flex-shrink-0 overflow-x-auto bg-white border-b-2 ${colors.border}`}>
+      {categoriesWithFeatured && categoriesWithFeatured.length > 0 && (
+        <div 
+          className={`flex-shrink-0 overflow-x-auto bg-white border-b-2 ${getBorderClasses()}`}
+          style={getBorderStyle()}
+        >
           <div className="flex gap-2 p-2">
-            {menu.categories.map((category: any) => (
+            {categoriesWithFeatured.map((category: any) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategoryId(category.id)}
                 className={`px-3 py-2 rounded-lg font-bold text-xs whitespace-nowrap transition-all duration-300 ${
                   selectedCategoryId === category.id
-                    ? `${colors.btn} text-white shadow-md scale-105`
+                    ? `${getButtonClasses()} scale-105`
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
+                style={selectedCategoryId === category.id ? getButtonStyle() : undefined}
               >
                 {category.name}
               </button>
@@ -228,11 +390,12 @@ export default function MenuDisplay({
             return (
             <div
               key={product.id}
-              className={`border-2 ${colors.border} rounded-lg overflow-hidden transition-all duration-500 ${
+              className={`border-2 ${getBorderClasses()} rounded-lg overflow-hidden transition-all duration-500 ${
                 !product.active ? 'opacity-50 grayscale' : 'hover:shadow-md'
               }`}
               style={{ 
                 animation: `slideIn 0.4s ease-out ${idx * 0.1}s both`,
+                ...getBorderStyle(),
                 background: `linear-gradient(135deg, ${colors.gradientRgba}, white)`,
               }}
             >
@@ -265,7 +428,7 @@ export default function MenuDisplay({
                     {product.hasVariants && product.variants?.sizes && product.variants.sizes.length > 0 ? (
                       selectedSizes[product.id] ? (
                         <div className="flex items-center justify-between mt-2">
-                          <p className={`${colors.text} font-bold text-base`}>
+                          <p className={`${getTextClasses()} font-bold text-base`} style={getTextStyle()}>
                             ${getProductPrice(product, selectedSizes[product.id], `${product.id}_combo`).toFixed(2)}
                           </p>
                           {onAddToCart && businessPlan === 'ventas' && (
@@ -288,7 +451,7 @@ export default function MenuDisplay({
                       )
                     ) : (
                       <div className="flex items-center justify-between mt-2">
-                        <p className={`${colors.text} font-bold text-base`}>
+                        <p className={`${getTextClasses()} font-bold text-base`} style={getTextStyle()}>
                           ${product.price?.toFixed(2) || '0.00'}
                         </p>
                         {onAddToCart && businessPlan === 'ventas' && (
@@ -312,16 +475,20 @@ export default function MenuDisplay({
 
                 {/* Fila 2: Tamaños */}
                 {product.hasVariants && product.variants?.sizes && product.variants.sizes.length > 0 && (
-                  <div className={`w-full flex flex-wrap gap-2 pt-2 border-t ${colors.border}`}>
+                  <div 
+                    className={`w-full flex flex-wrap gap-2 pt-2 border-t ${getBorderClasses()}`}
+                    style={getBorderStyle()}
+                  >
                     {product.variants.sizes.map((size: any) => (
                       <button
                         key={size.id}
                         onClick={() => setSelectedSizes({ ...selectedSizes, [product.id]: size.id })}
                         className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
                           selectedSizes[product.id] === size.id
-                            ? `${colors.btn} text-white shadow-md`
+                            ? `${getButtonClasses()}`
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
+                        style={selectedSizes[product.id] === size.id ? getButtonStyle() : undefined}
                       >
                         {size.name}
                       </button>
@@ -334,7 +501,10 @@ export default function MenuDisplay({
                   const selectedSize = product.variants?.sizes?.find((s: any) => s.id === selectedSizes[product.id]);
                   return selectedSize?.allowCombinations !== false;
                 })() && (
-                  <div className={`w-full pt-2 border-t ${colors.border}`}>
+                  <div 
+                    className={`w-full pt-2 border-t ${getBorderClasses()}`}
+                    style={getBorderStyle()}
+                  >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between px-3 py-3 bg-gray-50 rounded-lg">
                         <div className="flex-1">
@@ -402,9 +572,10 @@ export default function MenuDisplay({
                                     }}
                                     className={`px-2 py-1.5 text-xs rounded-lg border transition-all whitespace-nowrap ${
                                       isSelected
-                                        ? `${colors.btn} text-white font-semibold`
+                                        ? `${getButtonClasses()} font-semibold`
                                         : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50 cursor-pointer'
                                     }`}
+                                    style={isSelected ? getButtonStyle() : undefined}
                                   >
                                     {isSelected && '✓ '}{otherProduct.name}
                                   </button>
@@ -452,7 +623,10 @@ export default function MenuDisplay({
       </div>
 
       {/* Footer */}
-      <div className={`border-t-2 ${colors.border} p-3 bg-white flex-shrink-0 text-center`}>
+      <div 
+        className={`border-t-2 ${getBorderClasses()} p-3 bg-white flex-shrink-0 text-center`}
+        style={getBorderStyle()}
+      >
         {menu.whatsappNumber && menu.whatsappNumber.trim() ? (
           <p className="font-semibold text-xs text-gray-700 mb-1">📞 {menu.whatsappNumber}</p>
         ) : null}

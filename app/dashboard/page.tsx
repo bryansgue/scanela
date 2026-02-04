@@ -1099,16 +1099,14 @@ export default function DashboardPage() {
                         }
                         window.open(`/qr/print/${menuData.id}`, '_blank');
                       }}
-                      disabled={!menuData.id || userPlan === 'free'}
-                        className={`w-full font-semibold py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
-                        (menuData.id && userPlan !== 'free')
+                      disabled={!menuData.id}
+                      className={`w-full font-semibold py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
+                        menuData.id
                           ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105 cursor-pointer'
                           : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
                       }`}
                       title={
-                        userPlan === 'free' 
-                          ? '🔒 QR Imprimible bloqueado en plan Free' 
-                          : !menuData.id 
+                        !menuData.id 
                           ? '⚠️ Guarda tu menú primero' 
                           : '📋 Generar QR Imprimible'
                       }

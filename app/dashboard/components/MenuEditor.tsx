@@ -33,7 +33,7 @@
  * El auto-select inicial SOLO ocurre una vez al cargar (si no hay categoría seleccionada).
  */
 
-import { Plus, Trash2, ChevronDown, GripVertical, Settings2, X, Copy, Phone, Clock } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, GripVertical, Settings2, X, Copy, Phone, Clock, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import VariantPanel from './VariantPanel';
 import CategoryVariantPanel from './CategoryVariantPanel';
@@ -496,25 +496,19 @@ export default function MenuEditor({
             </div>
 
             {/* Subtítulo del Menú */}
-            <div className={businessPlan === 'free' ? 'opacity-60' : ''}>
+            <div>
               <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
                 📝 Subtítulo del Menú
-                {businessPlan === 'free' && (
-                  <span className="text-xs text-gray-500 font-normal ml-auto">
-                    🔒 Available in Scanela Menú plan
-                  </span>
-                )}
               </label>
               <input
                 type="text"
-                disabled={businessPlan === 'free'}
                 value={menu.menuSubtitle || 'Menú Digital QR'}
                 onChange={(e) => {
                   const newMenu = { ...menu, menuSubtitle: e.target.value };
                   onUpdate(newMenu);
                 }}
                 placeholder="Menú Digital QR"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold text-base bg-white hover:border-gray-300 transition-all duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold text-base bg-white hover:border-gray-300 transition-all duration-300"
               />
             </div>
 
@@ -535,22 +529,40 @@ export default function MenuEditor({
                     : 'bg-gray-50 border-gray-200'
                 }`}>
                   <span className="text-gray-600 text-sm font-medium">scanela.com/</span>
-                  <input
-                    type="text"
-                    disabled={businessPlan === 'free'}
-                    value={menu.customSlug || ''}
-                    onChange={(e) => {
-                      const newMenu = { ...menu, customSlug: e.target.value };
-                      onUpdate(newMenu);
-                    }}
-                    placeholder={businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
-                    className="flex-1 px-0 py-0 border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-800 font-semibold text-sm disabled:cursor-not-allowed"
-                  />
+                  {businessPlan === 'free' ? (
+                    <span className="flex-1 px-0 py-0 text-gray-800 font-semibold text-sm">
+                      menu-{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                    </span>
+                  ) : (
+                    <input
+                      type="text"
+                      disabled={businessPlan === 'free'}
+                      value={menu.customSlug || ''}
+                      onChange={(e) => {
+                        const newMenu = { ...menu, customSlug: e.target.value };
+                        onUpdate(newMenu);
+                      }}
+                      placeholder={businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                      className="flex-1 px-0 py-0 border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-800 font-semibold text-sm disabled:cursor-not-allowed"
+                    />
+                  )}
                 </div>
                 <p className="text-xs text-gray-500">
-                  Usa solo letras, números y guiones. Máximo 50 caracteres.
+                  {businessPlan === 'free' 
+                    ? 'Tu URL se genera automáticamente con el nombre de tu negocio'
+                    : 'Usa solo letras, números y guiones. Máximo 50 caracteres.'}
                 </p>
-                {menu.customSlug && (
+                {businessPlan === 'free' && (
+                  <a
+                    href={`https://scanela.com/menu-${businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    🔗 Visitar: scanela.com/menu-{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                  </a>
+                )}
+                {businessPlan !== 'free' && menu.customSlug && (
                   <a
                     href={`https://scanela.com/${menu.customSlug}`}
                     target="_blank"
@@ -641,9 +653,9 @@ export default function MenuEditor({
             </div>
 
             {/* Selector de Colores */}
-            <div>
+            <div className={businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Color del Tema</label>
-              <div className="grid grid-cols-6 gap-2 mb-3">
+              <div className="grid grid-cols-6 gap-2 mb-4">
                 {[
                   { name: 'orange', bg: 'from-orange-500 to-orange-600' },
                   { name: 'blue', bg: 'from-blue-500 to-blue-600' },
@@ -661,17 +673,57 @@ export default function MenuEditor({
                   <button
                     key={t.name}
                     onClick={() => onThemeChange?.(t.name)}
+                    disabled={businessPlan === 'free'}
                     className={`h-8 rounded transition-all duration-300 ${
                       theme === t.name
                         ? 'ring-2 ring-offset-1 ring-gray-800 scale-105'
                         : 'hover:scale-105'
-                    }`}
+                    } disabled:cursor-not-allowed`}
                     style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }}
                     title={t.name}
                   >
                     <div className={`w-full h-full rounded bg-gradient-to-r ${t.bg}`}></div>
                   </button>
                 ))}
+              </div>
+              
+              {/* Color Picker Personalizado */}
+              <div className={`flex items-center gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 ${businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}`}>
+                <label className="block text-sm font-semibold text-gray-700">O escoge cualquier color:</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={menu.customThemeColor || '#fe6e00'}
+                    onChange={(e) => {
+                      const customColor = e.target.value;
+                      const newMenu = { ...menu, customThemeColor: customColor };
+                      onUpdate(newMenu);
+                      // Actualizar el tema en el dashboard para que se refleje en el preview
+                      onThemeChange?.(customColor);
+                    }}
+                    disabled={businessPlan === 'free'}
+                    className="w-10 h-10 cursor-pointer border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-all disabled:cursor-not-allowed"
+                    title="Selecciona un color personalizado"
+                  />
+                  <input
+                    type="text"
+                    value={menu.customThemeColor || '#fe6e00'}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Validar que sea un color HEX válido
+                      if (/^#[0-9A-F]{6}$/i.test(value)) {
+                        const newMenu = { ...menu, customThemeColor: value };
+                        onUpdate(newMenu);
+                        // Actualizar el tema en el dashboard para que se refleje en el preview
+                        onThemeChange?.(value);
+                      }
+                    }}
+                    disabled={businessPlan === 'free'}
+                    placeholder="#fe6e00"
+                    maxLength={7}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                </div>
               </div>
             </div>
 
@@ -738,6 +790,113 @@ export default function MenuEditor({
                   ? 'En el plan Free siempre se muestra "Powered by Scanela"'
                   : 'Desactiva esto para ocultar el branding de Scanela en tu menú'}
               </p>
+            </div>
+
+            {/* Habilitar Productos Destacados */}
+            <div className={businessPlan === 'free' ? 'opacity-60 pointer-events-none' : ''}>
+              <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={menu.enableFeaturedProducts || false}
+                  onChange={(e) => {
+                    const newMenu = { ...menu, enableFeaturedProducts: e.target.checked };
+                    onUpdate(newMenu);
+                  }}
+                  disabled={businessPlan === 'free'}
+                  className="w-4 h-4 cursor-pointer disabled:cursor-not-allowed"
+                />
+                ⭐ Habilitar Productos Destacados
+                {businessPlan === 'free' && (
+                  <span className="text-xs text-gray-500 font-normal ml-auto">
+                    🔒 Available in Scanela Menú plan
+                  </span>
+                )}
+              </label>
+              <p className="text-xs text-gray-500">
+                {businessPlan === 'free' 
+                  ? 'Los productos destacados no están disponibles en el plan Free'
+                  : 'Activa esto para mostrar una categoría de productos destacados. Usa la estrella ⭐ en cada producto para marcarlo'}
+              </p>
+            </div>
+
+            {/* Redes Sociales */}
+            <div>
+              <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={menu.enableSocialLinks || false}
+                  onChange={(e) => {
+                    const newMenu = { ...menu, enableSocialLinks: e.target.checked };
+                    onUpdate(newMenu);
+                  }}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                📱 Habilitar Redes Sociales
+              </label>
+              <p className="text-xs text-gray-500 mb-3">
+                Agrega tus redes sociales. Activa cada una para mostrarla
+              </p>
+
+              {menu.enableSocialLinks && (
+                <div className="space-y-3">
+                  {[
+                    { key: 'facebook', label: 'Facebook', prefix: 'https://facebook.com/' },
+                    { key: 'instagram', label: 'Instagram', prefix: 'https://instagram.com/' },
+                    { key: 'tiktok', label: 'TikTok', prefix: 'https://tiktok.com/@' },
+                    { key: 'x', label: 'X (Twitter)', prefix: 'https://x.com/' },
+                    { key: 'whatsapp', label: 'WhatsApp', prefix: 'https://wa.me/' },
+                  ].map((social) => {
+                    const socialData = menu.socialLinks?.[social.key] || {};
+                    return (
+                      <div key={social.key} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <input
+                          type="checkbox"
+                          checked={socialData.enabled || false}
+                          onChange={(e) => {
+                            const newMenu = { 
+                              ...menu, 
+                              socialLinks: {
+                                ...menu.socialLinks,
+                                [social.key]: {
+                                  ...socialData,
+                                  enabled: e.target.checked
+                                }
+                              }
+                            };
+                            onUpdate(newMenu);
+                          }}
+                          className="w-4 h-4 cursor-pointer"
+                        />
+                        <span className="text-sm font-semibold text-gray-700 min-w-fit">{social.label}:</span>
+                        <div className="flex-1 flex items-center gap-1">
+                          <span className="text-xs text-gray-500">{social.prefix}</span>
+                          <input
+                            type="text"
+                            placeholder={social.key === 'whatsapp' ? '34912345678' : 'usuario'}
+                            value={socialData.url || ''}
+                            onChange={(e) => {
+                              const newMenu = { 
+                                ...menu, 
+                                socialLinks: {
+                                  ...menu.socialLinks,
+                                  [social.key]: {
+                                    ...socialData,
+                                    url: e.target.value,
+                                    enabled: socialData.enabled !== false
+                                  }
+                                }
+                              };
+                              onUpdate(newMenu);
+                            }}
+                            disabled={!socialData.enabled}
+                            className="flex-1 px-2 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -963,6 +1122,24 @@ export default function MenuEditor({
                                 }`}
                               />
                             </button>
+
+                            {/* Botón marcar como destacado - Solo para plan menu */}
+                            {menu.enableFeaturedProducts && businessPlan !== 'free' && (
+                              <button
+                                onClick={() => {
+                                  updateProduct(category.id, product.id, 'featured', !product.featured);
+                                  emitProductEditingEvent(category.id);
+                                }}
+                                className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 ${
+                                  product.featured
+                                    ? 'text-yellow-500 bg-yellow-100 hover:text-yellow-700 focus:ring-yellow-400'
+                                    : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100 focus:ring-yellow-400'
+                                }`}
+                                title={product.featured ? 'Desmarcar como destacado' : 'Marcar como destacado'}
+                              >
+                                <Star size={18} fill={product.featured ? 'currentColor' : 'none'} />
+                              </button>
+                            )}
 
                             <input
                               type="text"
