@@ -294,20 +294,21 @@ export default function MenuDisplay({
                 {menu.enableSocialLinks && menu.socialLinks && Object.values(menu.socialLinks).some((s: any) => s?.enabled) && (
                   <div className="flex justify-center gap-2 mt-2">
                     {[
-                      { key: 'facebook', icon: '/facebook.svg', label: 'Facebook' },
-                      { key: 'instagram', icon: '/instagram.svg', label: 'Instagram' },
-                      { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok' },
-                      { key: 'x', icon: '/x.svg', label: 'X' },
-                      { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp' },
+                      { key: 'facebook', icon: '/facebook.svg', label: 'Facebook', prefix: 'https://facebook.com/' },
+                      { key: 'instagram', icon: '/instagram.svg', label: 'Instagram', prefix: 'https://instagram.com/' },
+                      { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok', prefix: 'https://tiktok.com/@' },
+                      { key: 'x', icon: '/x.svg', label: 'X', prefix: 'https://x.com/' },
+                      { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp', prefix: 'https://wa.me/' },
                     ].map((social) => {
                       const socialData = menu.socialLinks?.[social.key];
-                      if (!socialData?.enabled) return null;
+                      if (!socialData?.enabled || !socialData?.url) return null;
+                      const fullUrl = social.prefix + socialData.url;
                       return (
                         <a
                           key={social.key}
-                          href={socialData.url || '#'}
-                          target={socialData.url ? '_blank' : undefined}
-                          rel={socialData.url ? 'noopener noreferrer' : undefined}
+                          href={fullUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           title={social.label}
                           className="w-6 h-6 inline-flex items-center justify-center transition-all hover:scale-125 opacity-80 hover:opacity-100"
                         >
@@ -330,20 +331,21 @@ export default function MenuDisplay({
             {menu.enableSocialLinks && menu.socialLinks && Object.values(menu.socialLinks).some((s: any) => s?.enabled) && (
               <div className="flex justify-center gap-2 mt-2">
                 {[
-                  { key: 'facebook', icon: '/facebook.svg', label: 'Facebook' },
-                  { key: 'instagram', icon: '/instagram.svg', label: 'Instagram' },
-                  { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok' },
-                  { key: 'x', icon: '/x.svg', label: 'X' },
-                  { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp' },
+                  { key: 'facebook', icon: '/facebook.svg', label: 'Facebook', prefix: 'https://facebook.com/' },
+                  { key: 'instagram', icon: '/instagram.svg', label: 'Instagram', prefix: 'https://instagram.com/' },
+                  { key: 'tiktok', icon: '/tiktok.svg', label: 'TikTok', prefix: 'https://tiktok.com/@' },
+                  { key: 'x', icon: '/x.svg', label: 'X', prefix: 'https://x.com/' },
+                  { key: 'whatsapp', icon: '/whatsapp.png', label: 'WhatsApp', prefix: 'https://wa.me/' },
                 ].map((social) => {
                   const socialData = menu.socialLinks?.[social.key];
-                  if (!socialData?.enabled) return null;
+                  if (!socialData?.enabled || !socialData?.url) return null;
+                  const fullUrl = social.prefix + socialData.url;
                   return (
                     <a
                       key={social.key}
-                      href={socialData.url || '#'}
-                      target={socialData.url ? '_blank' : undefined}
-                      rel={socialData.url ? 'noopener noreferrer' : undefined}
+                      href={fullUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       title={social.label}
                       className="w-6 h-6 inline-flex items-center justify-center transition-all hover:scale-125 opacity-80 hover:opacity-100"
                     >
