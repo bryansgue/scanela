@@ -530,10 +530,12 @@ export default function MenuEditor({
                 }`}>
                   <span className="text-gray-600 text-sm font-medium">scanela.com/</span>
                   {businessPlan === 'free' ? (
+                    // Para FREE: mostrar el URL real (puede tener hash si hay colisión)
                     <span className="flex-1 px-0 py-0 text-gray-800 font-semibold text-sm">
-                      {businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                      {menu.customSlug || businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
                     </span>
                   ) : (
+                    // Para PREMIUM: input editable
                     <input
                       type="text"
                       disabled={businessPlan === 'free'}
@@ -549,17 +551,17 @@ export default function MenuEditor({
                 </div>
                 <p className="text-xs text-gray-500">
                   {businessPlan === 'free' 
-                    ? 'Tu URL se genera automáticamente con el nombre de tu negocio'
+                    ? 'Tu URL se genera automáticamente con el nombre de tu negocio (con hash si ya existe)'
                     : 'Usa solo letras, números y guiones. Máximo 50 caracteres.'}
                 </p>
                 {businessPlan === 'free' && (
                   <a
-                    href={`https://scanela.com/${businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
+                    href={`https://scanela.com/${menu.customSlug || businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                   >
-                    🔗 Visitar: scanela.com/{businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
+                    🔗 Visitar: scanela.com/{menu.customSlug || businessName?.toLowerCase().replace(/\s+/g, '-') || 'mi-negocio'}
                   </a>
                 )}
                 {businessPlan !== 'free' && menu.customSlug && (

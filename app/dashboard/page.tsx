@@ -256,6 +256,58 @@ export default function DashboardPage() {
         const updatedBusinesses = [...businesses, newBusiness];
         setBusinesses(updatedBusinesses);
         setSelectedBusiness(newBusiness);
+
+        // 🎯 Crear menú inicial automáticamente
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const authToken = session?.access_token;
+
+          if (authToken) {
+            const initialMenuData = {
+              businessLogo: null,
+              logoMode: 'logo-name',
+              logoSize: 100,
+              logoOffsetX: 0,
+              logoOffsetY: 0,
+              logoOnlyOffsetX: 0,
+              logoOnlyOffsetY: 0,
+              categories: [],
+              businessName: `Negocio ${businesses.length + 1}`,
+              menuSubtitle: 'Menú Digital QR',
+            };
+
+            const response = await fetch('/api/dashboard/save-menu', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                businessId: newBusiness.id,
+                businessName: `Negocio ${businesses.length + 1}`,
+                theme: 'orange',
+                menuData: initialMenuData,
+              }),
+            });
+
+            const result = await response.json();
+            if (result.success && result.menu) {
+              // 🎯 ASIGNAR EL ID DEL MENÚ CREADO INMEDIATAMENTE
+              // ⭐ INCLUIR EL custom_slug REAL (que puede tener hash si hay colisión)
+              const newMenuWithId = {
+                ...initialMenuData,
+                id: result.menu.id,
+                customSlug: result.menu.custom_slug, // URL real con hash si aplica
+              };
+              setMenuData(newMenuWithId);
+              console.log('✅ Menú inicial creado automáticamente con ID:', result.menu.id);
+              console.log('✅ URL asignado:', result.menu.custom_slug);
+            }
+          }
+        } catch (error) {
+          console.error('⚠️ Error creando menú inicial:', error);
+          // No es crítico - el menú se puede crear después
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -424,6 +476,8 @@ export default function DashboardPage() {
         const newMenuData = {
           ...loadedMenu,
           id: menu.id,
+          // ⭐ ASIGNAR EL custom_slug REAL DE LA BD (que puede incluir hash)
+          customSlug: menu.custom_slug,
         };
         const newTheme = menu.theme || 'orange';
         
@@ -513,7 +567,12 @@ export default function DashboardPage() {
         businessId: selectedBusiness.id,
         businessName: selectedBusiness?.name || 'Mi Restaurante',
         theme: theme,
-        menuData: menuData,
+        // ⭐ Enviar customSlug al servidor para validación, pero NO en el JSON
+        customSlug: menuData.customSlug || undefined,
+        menuData: (() => {
+          const { customSlug, ...cleanMenuData } = menuData;
+          return cleanMenuData;
+        })(),
       };
 
       console.log('💾 GUARDANDO - Payload exacto:', {
@@ -521,6 +580,10 @@ export default function DashboardPage() {
         theme: theme,
         theme_tipo: typeof theme,
         theme_length: theme?.length,
+        customSlug: menuData.customSlug,
+        customSlug_existe: !!menuData.customSlug,
+        customSlug_tipo: typeof menuData.customSlug,
+        menuData_keys: Object.keys(menuData),
       });
 
       const response = await fetch('/api/dashboard/save-menu', {
@@ -532,14 +595,23 @@ export default function DashboardPage() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        console.error(`❌ Error HTTP ${response.status}:`, response.statusText);
-        const errorText = await response.text();
-        console.error('Respuesta del servidor:', errorText);
+      const result = await response.json();
+
+      // 🚨 Manejo de error 409 - URL duplicada
+      if (response.status === 409) {
+        console.error('⚠️ URL ya existe:', result.error);
+        const suggestion = result.suggestion;
+        const message = result.message || result.error;
+        alert(`${message}\n\n💡 Sugerencia: ${suggestion}`);
         return false;
       }
 
-      const result = await response.json();
+      if (!response.ok) {
+        console.error(`❌ Error HTTP ${response.status}:`, response.statusText);
+        alert(`Error al guardar: ${result.error || response.statusText}`);
+        return false;
+      }
+
       if (result.success) {
         console.log('✅ Menú guardado en Supabase para negocio:', selectedBusiness.id);
         
@@ -547,6 +619,30 @@ export default function DashboardPage() {
         if (result.menu) {
           allMenusRef.current.set(selectedBusiness.id, result.menu);
           console.log('✅ Cache actualizado para negocio:', selectedBusiness.id);
+          
+          // 📝 SIEMPRE actualizar customSlug si viene en la respuesta del servidor
+          // Esto asegura que se refleje el URL real (que puede incluir hash si hay colisión)
+          const serverSlug = result.menu.custom_slug;
+          const currentSlug = menuData.customSlug;
+          
+          console.log('🔍 Comparando slugs:', {
+            serverSlug,
+            currentSlug,
+            sonIguales: serverSlug === currentSlug,
+            truthy_serverSlug: !!serverSlug,
+          });
+          
+          if (serverSlug && serverSlug !== currentSlug) {
+            console.log('📝 Actualizando URL en menuData de:', currentSlug, 'a:', serverSlug);
+            setMenuData((prev: any) => ({
+              ...prev,
+              customSlug: serverSlug,
+            }));
+          } else if (serverSlug && serverSlug === currentSlug) {
+            console.log('✅ URL ya está actualizado en menuData:', serverSlug);
+          } else {
+            console.log('⚠️ serverSlug es falsy:', { serverSlug, type: typeof serverSlug });
+          }
         }
 
         // 💾 Guardar slug personalizado en la tabla menus (se guarda con el payload principal)
@@ -554,10 +650,12 @@ export default function DashboardPage() {
         return true;
       } else {
         console.error('❌ Error al guardar:', result.error);
+        alert(`Error: ${result.error}`);
         return false;
       }
     } catch (error) {
       console.error('❌ Error en saveMenuToSupabase:', error);
+      alert('Error al guardar menú');
       return false;
     }
   };
@@ -1094,20 +1192,22 @@ export default function DashboardPage() {
                     <button
                       onClick={() => {
                         if (!menuData.id) {
-                          alert('Por favor, guarda tu menú primero antes de generar el QR.');
+                          alert('Por favor, espera a que el menú se cargue.');
                           return;
                         }
                         window.open(`/qr/print/${menuData.id}`, '_blank');
                       }}
-                      disabled={!menuData.id}
+                      disabled={!menuData.id || !selectedBusiness?.id}
                       className={`w-full font-semibold py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md whitespace-nowrap text-sm font-medium ${
-                        menuData.id
+                        (menuData.id && selectedBusiness?.id)
                           ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105 cursor-pointer'
                           : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
                       }`}
                       title={
-                        !menuData.id 
-                          ? '⚠️ Guarda tu menú primero' 
+                        !selectedBusiness?.id
+                          ? '⚠️ Selecciona un negocio'
+                          : !menuData.id 
+                          ? '⚠️ Cargando menú...' 
                           : '📋 Generar QR Imprimible'
                       }
                     >
