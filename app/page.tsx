@@ -211,9 +211,9 @@ function Footer() {
           <FooterColumn
             title="Legal"
             links={[
-              { label: "Privacidad", href: "#" },
-              { label: "Términos", href: "#" },
-              { label: "Cookies", href: "#" },
+              { label: "Privacidad", href: "/privacy-policy" },
+              { label: "Términos de Servicio", href: "/terms-and-conditions" },
+              { label: "Contacto", href: "#contact" },
             ]}
           />
         </div>
