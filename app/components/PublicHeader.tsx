@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "../lib/supabase/client";
 import { LogOut, Menu, X } from "lucide-react";
 
@@ -16,6 +17,8 @@ export default function PublicHeader() {
   const [user, setUser] = useState<any>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const load = async () => {
@@ -42,9 +45,16 @@ export default function PublicHeader() {
     window.location.href = "/";
   };
 
-  const handleScrollTo = (id: string) => {
+  const handleNavClick = (id: string) => {
     setIsMenuOpen(false);
 
+    // Si el link es "pricing", navega a /pricing
+    if (id === "pricing") {
+      router.push("/pricing");
+      return;
+    }
+
+    // Para otros links, intenta hacer scroll en la página actual
     const element = document.getElementById(id);
     if (!element) return;
 
@@ -70,7 +80,7 @@ export default function PublicHeader() {
           {navigationLinks.map((link) => (
             <button
               key={link.id}
-              onClick={() => handleScrollTo(link.id)}
+              onClick={() => handleNavClick(link.id)}
               className="transition hover:text-white"
             >
               {link.label}
@@ -132,7 +142,7 @@ export default function PublicHeader() {
             {navigationLinks.map((link) => (
               <button
                 key={link.id}
-                onClick={() => handleScrollTo(link.id)}
+                onClick={() => handleNavClick(link.id)}
                 className="rounded-2xl px-3 py-3 text-left transition hover:bg-white/10"
               >
                 {link.label}

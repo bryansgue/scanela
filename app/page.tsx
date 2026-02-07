@@ -194,7 +194,7 @@ function Footer() {
             title="Producto"
             links={[
               { label: "Inicio", href: "/" },
-              { label: "Precios", href: "#pricing" },
+              { label: "Precios", href: "/pricing" },
               { label: "Crear menú", href: "/register" },
             ]}
           />
@@ -213,7 +213,7 @@ function Footer() {
             links={[
               { label: "Privacidad", href: "/privacy-policy" },
               { label: "Términos de Servicio", href: "/terms-and-conditions" },
-              { label: "Contacto", href: "#contact" },
+              { label: "Política de Reembolsos", href: "/refund-policy" },
             ]}
           />
         </div>
