@@ -84,7 +84,7 @@ export default function RefundPolicyPage() {
             </ul>
 
             <p className="mt-4">
-              Para estos casos especiales, contáctenos directamente en <span className="text-indigo-400 font-semibold">support@scanela.com</span>
+              Para estos casos especiales, contáctenos directamente en <span className="text-indigo-400 font-semibold">support@scanela.com</span> o <span className="text-indigo-400 font-semibold">bryansgue@gmail.com</span>
             </p>
           </section>
 
@@ -105,7 +105,7 @@ export default function RefundPolicyPage() {
 
             <h3 className="text-lg font-semibold text-slate-100 mt-4">Cómo Solicitar:</h3>
             <p>
-              Envíe su solicitud de reembolso a: <span className="text-indigo-400 font-semibold">refunds@scanela.com</span>
+              Envíe su solicitud de reembolso a: <span className="text-indigo-400 font-semibold">refunds@scanela.com</span> o <span className="text-indigo-400 font-semibold">bryansgue@gmail.com</span>
             </p>
 
             <p className="mt-4 text-sm text-slate-400">
@@ -163,7 +163,7 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-2xl font-bold text-white">9. Disputas de Facturación</h2>
             <p>
-              Si ve un cargo que no reconoce o tiene problemas con su facturación, contáctenos inmediatamente en <span className="text-indigo-400 font-semibold">billing@scanela.com</span> antes de abrir una disputa con su banco.
+              Si ve un cargo que no reconoce o tiene problemas con su facturación, contáctenos inmediatamente en <span className="text-indigo-400 font-semibold">billing@scanela.com</span> o <span className="text-indigo-400 font-semibold">bryansgue@gmail.com</span> antes de abrir una disputa con su banco.
             </p>
           </section>
 
@@ -177,6 +177,7 @@ export default function RefundPolicyPage() {
             <div className="mt-4 rounded-lg bg-slate-800/50 p-6 border border-slate-700">
               <p className="font-semibold text-slate-100">Equipo de Soporte de Scanela</p>
               <p className="mt-2">Email de Reembolsos: <span className="text-indigo-400">refunds@scanela.com</span></p>
+              <p>Email de CEO: <span className="text-indigo-400">bryansgue@gmail.com</span></p>
               <p>Email de Facturación: <span className="text-indigo-400">billing@scanela.com</span></p>
               <p className="mt-4">Sitio web: <span className="text-indigo-400">www.scanela.com</span></p>
             </div>

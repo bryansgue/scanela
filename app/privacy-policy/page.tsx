@@ -235,6 +235,7 @@ export default function PrivacyPolicyPage() {
             <div className="mt-4 rounded-lg bg-slate-800/50 p-6 border border-slate-700">
               <p className="font-semibold text-slate-100">Scanela</p>
               <p className="mt-2">Email: <span className="text-indigo-400">privacy@scanela.com</span></p>
+              <p>Email de CEO: <span className="text-indigo-400">bryansgue@gmail.com</span></p>
               <p>Sitio web: <span className="text-indigo-400">www.scanela.com</span></p>
               <p className="mt-4 text-sm text-slate-400">
                 Responderemos a solicitudes de privacidad dentro de 30 días.

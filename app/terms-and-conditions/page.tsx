@@ -159,6 +159,10 @@ export default function TermsAndConditions() {
             <a href="mailto:soporte@scanela.com" className="text-indigo-600 hover:text-indigo-700 font-medium">
               soporte@scanela.com
             </a>
+            {' '}o{' '}
+            <a href="mailto:bryansgue@gmail.com" className="text-indigo-600 hover:text-indigo-700 font-medium">
+              bryansgue@gmail.com
+            </a>
           </p>
         </section>
 
