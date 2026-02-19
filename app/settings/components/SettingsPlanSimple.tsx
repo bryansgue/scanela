@@ -605,7 +605,7 @@ export default function SettingsPlan() {
           {subscriptionLoading ? (
             <div className="flex items-center gap-3 py-8 text-sm text-gray-600">
               <Loader2 size={18} className="animate-spin text-blue-500" />
-              Sincronizando con Stripe...
+              Sincronizando con Paddle...
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-6">
@@ -644,7 +644,7 @@ export default function SettingsPlan() {
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-1">Nuestros Planes</h3>
             <p className="text-gray-600">
-              Elige el plan que mejor se adapta a tu negocio. El pago se gestiona con Stripe y puedes cancelar en cualquier momento.
+              Elige el plan que mejor se adapta a tu negocio. El pago se gestiona con Paddle y puedes cancelar en cualquier momento.
             </p>
           </div>
           <div className="relative inline-flex rounded-full border border-indigo-100 bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 p-1 text-sm font-medium text-indigo-800 shadow-inner">
@@ -908,7 +908,7 @@ export default function SettingsPlan() {
                 className={`inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 disabled:opacity-60 ${BUTTON_FEEDBACK_CLASSES}`}
               >
                 {loadingCheckout && <Loader2 size={16} className="animate-spin" />}
-                {selectedPaymentMethod === "stripe" ? "Continuar con Stripe" : "Muy pronto"}
+                    {selectedPaymentMethod === "stripe" ? "Continuar con Paddle" : "Muy pronto"}
               </button>
             </div>
           </div>

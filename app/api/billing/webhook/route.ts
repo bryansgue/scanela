@@ -1,85 +1,43 @@
-import { NextRequest, NextResponse } from "next/server";
-import type Stripe from "stripe";
-
+import { NextResponse } from "next/server";
 import {
-	resolvePlanFromPriceId,
-	stripe,
-	type StripePlanId,
-	type StripePlanInterval,
-} from "../../../../lib/stripeServer";
+	verifyPaddleWebhookSignature,
+	parsePaddleWebhookEvent,
+	mapPaddlePriceIdToPlan,
+	getBillingIntervalFromPriceId,
+	type PaddleWebhookEvent,
+} from "@/lib/paddleServer";
 import { getSupabaseAdminClient } from "../../../../lib/supabaseServer";
-import { normalizeInterval, planMetadata, planToDb } from "@/lib/plans";
+import { planMetadata, planToDb, normalizeInterval } from "@/lib/plans";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const serialize = (payload: unknown) => JSON.parse(JSON.stringify(payload ?? null));
 type AdminClient = ReturnType<typeof getSupabaseAdminClient>;
 
-const epochToIso = (value?: number | null) =>
-	typeof value === "number" ? new Date(value * 1000).toISOString() : null;
-
-function determinePlan(
-	metadataPlan?: string | null,
-	priceId?: string | null
-): StripePlanId {
-	if (metadataPlan === "menu" || metadataPlan === "ventas") {
-		return metadataPlan;
-	}
-	const resolved = resolvePlanFromPriceId(priceId || undefined);
-	return resolved?.plan ?? "menu";
-}
-
-function determineInterval(
-	metadataInterval?: string | null,
-	stripeInterval?: string | null,
-	priceId?: string | null
-): StripePlanInterval {
-	if (metadataInterval === "annual" || metadataInterval === "monthly") {
-		return metadataInterval;
-	}
-	if (stripeInterval) {
-		return normalizeInterval(stripeInterval);
-	}
-	const resolved = resolvePlanFromPriceId(priceId || undefined);
-	return resolved?.interval ?? "monthly";
-}
-
 async function resolveUserId(
 	admin: AdminClient,
-	payload: Stripe.Event.Data.Object | null
-) {
-	if (!payload || typeof payload !== "object") return null;
-
-	const directMetadata = (payload as { metadata?: Record<string, unknown> }).metadata;
-	if (directMetadata && typeof directMetadata.supabase_user_id === "string") {
-		return directMetadata.supabase_user_id;
-	}
-
-	const customerField = (payload as { customer?: string | Stripe.Customer }).customer;
-	const customerId = typeof customerField === "string" ? customerField : customerField?.id;
-
+	event: PaddleWebhookEvent
+): Promise<string | null> {
+	const customerId = (event.data as any).customer_id;
+	
 	if (customerId) {
+		// Try to find user by paddle customer ID
 		const { data } = await admin
 			.from("subscriptions")
 			.select("user_id")
-			.eq("stripe_customer_id", customerId)
+			.eq("paddle_customer_id", customerId)
 			.maybeSingle();
 		if (data?.user_id) return data.user_id;
 	}
 
-	const subscriptionField = (payload as { subscription?: string | Stripe.Subscription }).subscription;
-	const subscriptionId =
-		typeof subscriptionField === "string"
-			? subscriptionField
-			: subscriptionField?.id || (payload as Stripe.Subscription | null)?.id;
-
-	if (subscriptionId) {
+	// If it's a subscription event, try to find by subscription ID
+	const subscriptionId = (event.data as any).subscription_id || (event.data as any).id;
+	if (subscriptionId && event.event_type.includes("subscription")) {
 		const { data } = await admin
 			.from("subscriptions")
 			.select("user_id")
-			.eq("stripe_subscription_id", subscriptionId)
+			.eq("paddle_subscription_id", subscriptionId)
 			.maybeSingle();
 		if (data?.user_id) return data.user_id;
 	}
@@ -89,18 +47,18 @@ async function resolveUserId(
 
 async function logEvent(
 	admin: AdminClient,
-	event: Stripe.Event,
+	event: PaddleWebhookEvent,
 	userId: string | null
 ) {
 	try {
 		await admin.from("payment_events").insert({
 			user_id: userId,
-			event_type: event.type,
-			stripe_id: (event.data.object as { id?: string })?.id ?? event.id,
-			payload: serialize(event.data.object),
+			event_type: event.event_type,
+			paddle_id: event.event_id,
+			payload: serialize(event.data),
 		});
 	} catch (err) {
-		console.error("[Billing][webhook] Error registrando evento:", err);
+		console.error("[webhook] Error registrando evento:", err);
 	}
 }
 
@@ -110,7 +68,7 @@ async function persistSubscription(
 		userId: string | null;
 		subscriptionId?: string | null;
 		customerId?: string | null;
-		payload: Record<string, unknown>;
+		payload: Record<string, any>;
 	}
 ) {
 	const cleanedPayload = Object.fromEntries(
@@ -137,7 +95,7 @@ async function persistSubscription(
 			await admin
 				.from("subscriptions")
 				.update(cleanedPayload)
-				.eq("stripe_subscription_id", data.subscriptionId);
+				.eq("paddle_subscription_id", data.subscriptionId);
 			return;
 		}
 
@@ -145,17 +103,17 @@ async function persistSubscription(
 			await admin
 				.from("subscriptions")
 				.update(cleanedPayload)
-				.eq("stripe_customer_id", data.customerId);
+				.eq("paddle_customer_id", data.customerId);
 		}
 	} catch (err) {
-		console.error("[Billing][webhook] Error guardando suscripción:", err);
+		console.error("[webhook] Error guardando suscripción:", err);
 	}
 }
 
 async function updateUserPlanMetadata(
 	admin: AdminClient,
 	userId: string | null,
-	plan: StripePlanId | "free"
+	plan: string
 ) {
 	if (!userId) return;
 	try {
@@ -163,138 +121,122 @@ async function updateUserPlanMetadata(
 			user_metadata: { plan },
 		});
 	} catch (err) {
-		console.error("[Billing][webhook] Error actualizando metadata de usuario:", err);
+		console.error("[webhook] Error actualizando metadata de usuario:", err);
 	}
 }
 
-async function handleCheckoutCompleted(
+async function handleSubscriptionCreated(
 	admin: AdminClient,
-	session: Stripe.Checkout.Session,
+	event: PaddleWebhookEvent,
 	userId: string | null
 ) {
-	const supabaseUserId =
-		(session.metadata?.supabase_user_id as string | undefined) || userId;
-	if (!supabaseUserId) return;
-
-	const priceId = (session.metadata?.priceId as string | undefined) ?? null;
-	const plan = determinePlan(session.metadata?.planId as string, priceId);
-	const interval = determineInterval(session.metadata?.interval as string, null, priceId);
-	const subscriptionId =
-		typeof session.subscription === "string"
-			? session.subscription
-			: session.subscription?.id ?? null;
-	const customerId =
-		typeof session.customer === "string"
-			? session.customer
-			: session.customer?.id ?? null;
+	const data = event.data as any;
+	const subscriptionId = data.id;
+	const customerId = data.customer_id;
+	
+	// Get price ID from first item
+	const priceId = data.items?.[0]?.price_id;
+	const plan = mapPaddlePriceIdToPlan(priceId) || "menu";
+	const interval = getBillingIntervalFromPriceId(priceId) || "monthly";
 
 	await persistSubscription(admin, {
-		userId: supabaseUserId,
+		userId,
 		subscriptionId,
 		customerId,
 		payload: {
-			plan: planToDb(plan),
-			plan_metadata: planMetadata(plan),
-			plan_source: "stripe",
+			plan: planToDb(plan as "menu" | "ventas"),
+			plan_metadata: planMetadata(plan as "menu" | "ventas"),
+			plan_source: "paddle",
 			billing_period: interval,
-			status: session.payment_status === "paid" ? "active" : "pending",
-			stripe_checkout_session_id: session.id,
-			stripe_subscription_id: subscriptionId,
-			stripe_customer_id: customerId,
-			stripe_price_id: priceId,
+			status: data.status || "active",
+			paddle_subscription_id: subscriptionId,
+			paddle_customer_id: customerId,
+			paddle_price_id: priceId,
+			current_period_start: data.current_billing_period?.starts_at,
+			current_period_end: data.current_billing_period?.ends_at,
 		},
 	});
 
-	if (session.payment_status === "paid") {
-		await updateUserPlanMetadata(admin, supabaseUserId, plan);
+	if (data.status === "active") {
+		await updateUserPlanMetadata(admin, userId, plan);
 	}
 }
 
-async function handleSubscriptionSync(
+async function handleSubscriptionUpdated(
 	admin: AdminClient,
-	subscription: Stripe.Subscription,
-	userId: string | null,
-	eventType: string
+	event: PaddleWebhookEvent,
+	userId: string | null
 ) {
-	const supabaseUserId = subscription.metadata?.supabase_user_id || userId;
-	const customerId =
-		typeof subscription.customer === "string"
-			? subscription.customer
-			: subscription.customer?.id ?? null;
-	const priceId = subscription.items.data[0]?.price?.id ?? null;
-	const periodFields = subscription as {
-		current_period_start?: number | null;
-		current_period_end?: number | null;
-	};
-	const plan =
-		eventType === "customer.subscription.deleted"
-			? "free"
-			: determinePlan(subscription.metadata?.planId as string, priceId);
-	const interval =
-		eventType === "customer.subscription.deleted"
-			? "monthly"
-			: determineInterval(
-					subscription.metadata?.interval as string,
-					subscription.items.data[0]?.price?.recurring?.interval,
-					priceId
-				);
+	const data = event.data as any;
+	const subscriptionId = data.id;
+	const customerId = data.customer_id;
+	const priceId = data.items?.[0]?.price_id;
+	const plan = mapPaddlePriceIdToPlan(priceId) || "menu";
+	const interval = getBillingIntervalFromPriceId(priceId) || "monthly";
 
 	await persistSubscription(admin, {
-		userId: supabaseUserId,
-		subscriptionId: subscription.id,
+		userId,
+		subscriptionId,
 		customerId,
 		payload: {
-			plan: plan === "free" ? planToDb("free") : planToDb(plan as StripePlanId),
-			plan_metadata: planMetadata(plan === "free" ? "free" : (plan as StripePlanId)),
-			plan_source: "stripe",
+			plan: planToDb(plan as "menu" | "ventas"),
+			plan_metadata: planMetadata(plan as "menu" | "ventas"),
+			status: data.status,
 			billing_period: interval,
-			status:
-				eventType === "customer.subscription.deleted" ? "canceled" : subscription.status,
-			stripe_customer_id: customerId,
-			stripe_subscription_id: subscription.id,
-			stripe_price_id: priceId,
-					current_period_start: epochToIso(periodFields.current_period_start),
-					current_period_end: epochToIso(periodFields.current_period_end),
-			cancel_at_period_end: subscription.cancel_at_period_end ?? false,
-			trial_ends_at: epochToIso(subscription.trial_end),
+			current_period_start: data.current_billing_period?.starts_at,
+			current_period_end: data.current_billing_period?.ends_at,
+			cancel_at_period_end: data.scheduled_change?.action === "cancel" || false,
 		},
 	});
 
-	await updateUserPlanMetadata(admin, supabaseUserId, plan === "free" ? "free" : (plan as StripePlanId));
+	await updateUserPlanMetadata(admin, userId, plan);
 }
 
-async function handleInvoiceEvent(
+async function handleSubscriptionCanceled(
 	admin: AdminClient,
-	invoice: Stripe.Invoice,
-	userId: string | null,
-	eventType: string
+	event: PaddleWebhookEvent,
+	userId: string | null
 ) {
-	const customerId =
-		typeof invoice.customer === "string"
-			? invoice.customer
-			: invoice.customer?.id ?? null;
+	const data = event.data as any;
+	const subscriptionId = data.id;
+	const customerId = data.customer_id;
 
-	const status =
-		eventType === "invoice.payment_succeeded"
-			? "paid"
-			: invoice.status ?? "open";
-	const paidAt =
-		invoice.status_transitions?.paid_at || invoice.created
-			? epochToIso(invoice.status_transitions?.paid_at || invoice.created)
-			: new Date().toISOString();
+	await persistSubscription(admin, {
+		userId,
+		subscriptionId,
+		customerId,
+		payload: {
+			plan: planToDb("free"),
+			plan_metadata: planMetadata("free"),
+			status: "canceled",
+			cancel_at_period_end: false,
+		},
+	});
 
+	await updateUserPlanMetadata(admin, userId, "free");
+}
+
+async function handleTransactionCompleted(
+	admin: AdminClient,
+	event: PaddleWebhookEvent,
+	userId: string | null
+) {
+	const data = event.data as any;
+	const customerId = data.customer_id;
+
+	// Update last payment status
 	const query = admin
 		.from("subscriptions")
 		.update({
-			last_payment_status: status,
-			last_payment_at: paidAt,
+			last_payment_status: "paid",
+			last_payment_at: data.completed_at,
 			updated_at: new Date().toISOString(),
 		});
 
-	if (customerId) {
-		query.eq("stripe_customer_id", customerId);
-	} else if (userId) {
+	if (userId) {
 		query.eq("user_id", userId);
+	} else if (customerId) {
+		query.eq("paddle_customer_id", customerId);
 	} else {
 		return;
 	}
@@ -302,53 +244,56 @@ async function handleInvoiceEvent(
 	await query;
 }
 
-export async function POST(request: NextRequest) {
-	if (!webhookSecret) {
-		console.error("[Billing][webhook] Falta STRIPE_WEBHOOK_SECRET");
-		return NextResponse.json({ error: "Stripe no configurado" }, { status: 500 });
-	}
-
-	const signature = request.headers.get("stripe-signature");
-	if (!signature) {
+export async function POST(request: Request) {
+	const paddleSignature = request.headers.get("paddle-signature");
+	if (!paddleSignature) {
+		console.error("[webhook] No Paddle-Signature header");
 		return NextResponse.json({ error: "Sin firma" }, { status: 400 });
 	}
 
 	const rawBody = await request.text();
 
-	let event: Stripe.Event;
-	try {
-		event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
-	} catch (err) {
-		console.error("[Billing][webhook] Firma inválida:", err);
+	// Verify signature
+	const isValid = await verifyPaddleWebhookSignature(paddleSignature, rawBody);
+	if (!isValid) {
+		console.error("[webhook] Firma inválida");
 		return NextResponse.json({ error: "Firma inválida" }, { status: 400 });
 	}
 
+	let event: PaddleWebhookEvent;
+	try {
+		event = await parsePaddleWebhookEvent(rawBody);
+	} catch (err) {
+		console.error("[webhook] Error parseando evento:", err);
+		return NextResponse.json({ error: "Evento inválido" }, { status: 400 });
+	}
+
 	const admin = getSupabaseAdminClient();
-	const stripeObject = event.data.object;
-	const userId = await resolveUserId(admin, stripeObject);
+	const userId = await resolveUserId(admin, event);
 
 	await logEvent(admin, event, userId);
 
 	try {
-		switch (event.type) {
-			case "checkout.session.completed":
-				await handleCheckoutCompleted(admin, stripeObject as Stripe.Checkout.Session, userId);
+		switch (event.event_type) {
+			case "subscription.created":
+				await handleSubscriptionCreated(admin, event, userId);
 				break;
-			case "customer.subscription.created":
-			case "customer.subscription.updated":
-			case "customer.subscription.deleted":
-				await handleSubscriptionSync(admin, stripeObject as Stripe.Subscription, userId, event.type);
+			case "subscription.updated":
+				await handleSubscriptionUpdated(admin, event, userId);
 				break;
-			case "invoice.payment_succeeded":
-			case "invoice.payment_failed":
-				await handleInvoiceEvent(admin, stripeObject as Stripe.Invoice, userId, event.type);
+			case "subscription.canceled":
+				await handleSubscriptionCanceled(admin, event, userId);
+				break;
+			case "transaction.completed":
+				await handleTransactionCompleted(admin, event, userId);
 				break;
 			default:
+				console.log(`[webhook] Evento no manejado: ${event.event_type}`);
 				break;
 		}
 	} catch (err) {
-		console.error("[Billing][webhook] Error procesando evento:", event.type, err);
-		return NextResponse.json({ error: "Error procesando evento" }, { status: 500 });
+		console.error("[webhook] Error procesando evento:", event.event_type, err);
+		// Still return 200 to acknowledge receipt
 	}
 
 	return NextResponse.json({ received: true });

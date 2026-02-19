@@ -21,7 +21,7 @@ export async function GET() {
     } = await admin
       .from("subscriptions")
       .select(
-        "plan,plan_metadata,status,billing_period,plan_source,cancel_at_period_end,current_period_start,current_period_end,last_payment_status,last_payment_at,stripe_subscription_id,stripe_price_id,stripe_customer_id,stripe_checkout_session_id,trial_ends_at,updated_at"
+        "plan,plan_metadata,status,billing_period,plan_source,cancel_at_period_end,current_period_start,current_period_end,last_payment_status,last_payment_at,stripe_subscription_id,stripe_price_id,stripe_customer_id,stripe_checkout_session_id,paddle_subscription_id,paddle_price_id,paddle_customer_id,paddle_checkout_id,trial_ends_at,updated_at"
       )
       .eq("user_id", user.id)
       .maybeSingle();
