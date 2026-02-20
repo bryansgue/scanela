@@ -62,7 +62,14 @@ export async function POST(request: Request) {
       user.id,
       priceId,
       interval as "monthly" | "annual"
-    );
+    ).catch(error => {
+      console.error("[checkout] Detailed error from Paddle:", {
+        message: error.message,
+        status: error.status,
+        body: error.body,
+      });
+      throw error;
+    });
 
     const origin = resolveOrigin();
 
