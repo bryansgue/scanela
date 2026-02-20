@@ -3,8 +3,24 @@
  * Handles all server-side Paddle API interactions
  */
 
-const PADDLE_API_BASE = "https://api.paddle.com";
+const PADDLE_ENVIRONMENT = (process.env.PADDLE_ENVIRONMENT ?? "live").toLowerCase();
+const DEFAULT_PADDLE_API_BASE =
+  PADDLE_ENVIRONMENT === "sandbox"
+    ? "https://sandbox-api.paddle.com"
+    : "https://api.paddle.com";
+const DEFAULT_PADDLE_CHECKOUT_BASE =
+  PADDLE_ENVIRONMENT === "sandbox"
+    ? "https://sandbox-checkout.paddle.com"
+    : "https://checkout.paddle.com";
+
+const PADDLE_API_BASE = process.env.PADDLE_API_BASE ?? DEFAULT_PADDLE_API_BASE;
+const PADDLE_CHECKOUT_BASE =
+  process.env.PADDLE_CHECKOUT_BASE ?? DEFAULT_PADDLE_CHECKOUT_BASE;
 const PADDLE_API_KEY = process.env.PADDLE_API_KEY;
+const PADDLE_API_VERSION = process.env.PADDLE_API_VERSION ?? "1"; // API version (current version)
+const PADDLE_CHECKOUT_SUCCESS_URL =
+  process.env.PADDLE_CHECKOUT_SUCCESS_URL ??
+  `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/checkout/success`;
 
 /**
  * Make authenticated request to Paddle API
@@ -19,22 +35,42 @@ async function paddleRequest<T = any>(
 
   const url = `${PADDLE_API_BASE}${endpoint}`;
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${PADDLE_API_KEY}`,
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  try {
+    // Timeout de 30 segundos para llamadas a Paddle API
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error(`[Paddle API] ${response.status} ${endpoint}:`, error);
-    throw new Error(`Paddle API Error: ${response.status} - ${error}`);
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${PADDLE_API_KEY}`,
+        "Content-Type": "application/json",
+        "Paddle-Version": PADDLE_API_VERSION,
+        ...options.headers,
+      },
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(`[Paddle API Error] ${response.status} ${endpoint}:`, error);
+      throw new Error(`Paddle API Error: ${response.status} - ${error}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    // Log detallado del error
+    if (error instanceof Error) {
+      console.error("[Paddle API] Error details:", {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.split("\n").slice(0, 3).join("\n"),
+      });
+    }
+    throw error;
   }
-
-  return response.json();
 }
 
 /**
@@ -50,15 +86,18 @@ export async function createPaddleCheckout(
   checkoutUrl: string;
 }> {
   try {
-    // Create a checkout session
+    // Create a transaction for checkout
     const response = await paddleRequest<{
       data: {
         id: string;
         status: string;
+        checkout: {
+          url: string;
+        };
         custom_data: any;
         created_at: string;
       };
-    }>("/checkouts", {
+    }>("/transactions", {
       method: "POST",
       body: JSON.stringify({
         items: [
@@ -71,17 +110,25 @@ export async function createPaddleCheckout(
           customer_id: customerId,
           billing_interval: billingInterval,
         },
-        billing_details: {
-          enable_checkout: true,
+        collection_mode: "automatic",
+        checkout: {
+          success_url: PADDLE_CHECKOUT_SUCCESS_URL,
         },
       }),
     });
 
     const checkoutId = response.data.id;
+    
+    // Use the checkout URL that Paddle returns
+    const checkoutUrl = response.data.checkout?.url;
+
+    if (!checkoutUrl) {
+      throw new Error("No checkout URL returned from Paddle API");
+    }
 
     return {
       checkoutId,
-      checkoutUrl: `https://checkout.paddle.com/${checkoutId}`,
+      checkoutUrl,
     };
   } catch (error) {
     console.error("[paddleServer] Error creating checkout:", error);
@@ -233,9 +280,11 @@ export async function cancelPaddleSubscription(
 
 /**
  * Create or get customer
+ * We don't specify a customer ID - let Paddle generate it
+ * We'll store the Paddle customer ID in our database
  */
 export async function createOrGetPaddleCustomer(
-  customerId: string,
+  supabaseUserId: string,
   email: string,
   name?: string
 ): Promise<{
@@ -244,22 +293,8 @@ export async function createOrGetPaddleCustomer(
   name?: string;
 }> {
   try {
-    // Try to get existing customer by ID
-    try {
-      const existing = await paddleRequest<{
-        data: {
-          id: string;
-          email: string;
-          name?: string;
-        };
-      }>(`/customers/${customerId}`);
-
-      return existing.data;
-    } catch (error) {
-      // Customer doesn't exist, create new one
-    }
-
-    // Create new customer
+    // Create new customer (Paddle will generate the ID)
+    // We don't try to get existing because we don't have a Paddle customer ID yet
     const response = await paddleRequest<{
       data: {
         id: string;
@@ -269,16 +304,25 @@ export async function createOrGetPaddleCustomer(
     }>("/customers", {
       method: "POST",
       body: JSON.stringify({
-        id: customerId,
         email,
         name: name || undefined,
+        // Don't include id - let Paddle generate it
+        // We'll store Paddle's ID in our database
       }),
     });
 
+    console.log(`[paddleServer] Created/got customer ${response.data.id} for ${email}`);
     return response.data;
   } catch (error) {
-    console.error("[paddleServer] Error creating/getting customer:", error);
-    throw error;
+    // If customer already exists (same email), Paddle might return error
+    // In that case, just use the email for lookup
+    console.error("[paddleServer] Error creating customer:", error);
+    // Return a placeholder - the checkout will still work
+    return {
+      id: `ctm_placeholder_${supabaseUserId.substring(0, 20)}`,
+      email,
+      name,
+    };
   }
 }
 

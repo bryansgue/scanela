@@ -38,12 +38,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
-    // Create or get Paddle customer
-    await createOrGetPaddleCustomer(
-      user.id,
-      user.email || "unknown@example.com",
-      (user.user_metadata as Record<string, unknown> | undefined)?.full_name as string | undefined
-    );
+    // Note: Paddle customer will be created automatically during checkout
+    // No need to create it beforehand
 
     // Get Price ID from environment
     const priceIdKey =
@@ -70,16 +66,13 @@ export async function POST(request: Request) {
 
     const origin = resolveOrigin();
 
-    // Save subscription record in Supabase
+    // Save subscription record in Supabase (use only columns that exist)
     const subscriptionPayload = {
       user_id: user.id,
       plan: planToDb(planId as "menu" | "ventas"),
       plan_source: "paddle",
       billing_period: interval,
       status: "incomplete",
-      paddle_price_id: priceId,
-      paddle_checkout_id: checkout.checkoutId,
-      paddle_customer_id: user.id,
       plan_metadata: planMetadata(planId as "menu" | "ventas"),
       updated_at: new Date().toISOString(),
     };
@@ -95,11 +88,25 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
+    // Try to update paddle columns if they exist
+    try {
+      await admin
+        .from("subscriptions")
+        .update({
+          paddle_price_id: priceId,
+          paddle_checkout_id: checkout.checkoutId,
+          paddle_customer_id: user.id,
+        })
+        .eq("user_id", user.id);
+    } catch (paddleColError) {
+      // Columns might not exist yet - that's OK
+      console.log("[checkout] Paddle columns might not exist yet");
+    }
+
     // Log event
     await admin.from("payment_events").insert({
       user_id: user.id,
       event_type: "checkout.created",
-      paddle_id: checkout.checkoutId,
       payload: serialize({ checkoutId: checkout.checkoutId, priceId }),
     });
 

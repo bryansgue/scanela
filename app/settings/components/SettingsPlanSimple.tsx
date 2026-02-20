@@ -310,7 +310,7 @@ export default function SettingsPlan() {
       "¿Quieres cancelar de inmediato? Perderás el acceso al plan pagado al instante y el tiempo restante no es reembolsable."
     );
 
-  const startStripeCheckout = useCallback(
+  const startPaddleCheckout = useCallback(
     async (planId: UserPlan) => {
       setErrorMessage(null);
       setLoadingCheckout(true);
@@ -328,7 +328,7 @@ export default function SettingsPlan() {
         }
 
         if (!payload.url) {
-          throw new Error("Stripe no devolvió una URL de checkout");
+          throw new Error("Paddle no devolvió una URL de checkout");
         }
 
         window.location.href = payload.url;
@@ -447,7 +447,7 @@ export default function SettingsPlan() {
     if (!selectedPlan || loadingCheckout) return;
 
     if (selectedPaymentMethod === "stripe") {
-      await startStripeCheckout(selectedPlan);
+      await startPaddleCheckout(selectedPlan);
       return;
     }
 

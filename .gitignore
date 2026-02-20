@@ -2,3 +2,5 @@ node_modules/
 .next/
 .env
 .env.local
+PADDLE_PRODUCTION_READY.md
+DEPLOY_CHECKLIST.md

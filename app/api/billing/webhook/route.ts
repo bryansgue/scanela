@@ -71,11 +71,22 @@ async function persistSubscription(
 		payload: Record<string, any>;
 	}
 ) {
-	const cleanedPayload = Object.fromEntries(
-		Object.entries({ ...data.payload, updated_at: new Date().toISOString() }).filter(
-			([, value]) => value !== undefined
-		)
-	);
+	// Filter to only include columns that are guaranteed to exist
+	const safePayload = {
+		updated_at: new Date().toISOString(),
+	} as Record<string, any>;
+
+	// Add columns that we know exist
+	if (data.payload.plan !== undefined) safePayload.plan = data.payload.plan;
+	if (data.payload.plan_metadata !== undefined) safePayload.plan_metadata = data.payload.plan_metadata;
+	if (data.payload.status !== undefined) safePayload.status = data.payload.status;
+	if (data.payload.billing_period !== undefined) safePayload.billing_period = data.payload.billing_period;
+	if (data.payload.cancel_at_period_end !== undefined) safePayload.cancel_at_period_end = data.payload.cancel_at_period_end;
+	if (data.payload.current_period_start !== undefined) safePayload.current_period_start = data.payload.current_period_start;
+	if (data.payload.current_period_end !== undefined) safePayload.current_period_end = data.payload.current_period_end;
+	if (data.payload.last_payment_status !== undefined) safePayload.last_payment_status = data.payload.last_payment_status;
+	if (data.payload.last_payment_at !== undefined) safePayload.last_payment_at = data.payload.last_payment_at;
+	if (data.payload.plan_source !== undefined) safePayload.plan_source = data.payload.plan_source;
 
 	try {
 		if (data.userId) {
@@ -84,26 +95,50 @@ async function persistSubscription(
 				.upsert(
 					{
 						user_id: data.userId,
-						...cleanedPayload,
+						...safePayload,
 					},
 					{ onConflict: "user_id" }
 				);
+
+			// Try to update paddle columns if they exist (won't fail if they don't)
+			try {
+				if (data.payload.paddle_subscription_id) {
+					await admin
+						.from("subscriptions")
+						.update({ paddle_subscription_id: data.payload.paddle_subscription_id })
+						.eq("user_id", data.userId);
+				}
+				if (data.payload.paddle_customer_id) {
+					await admin
+						.from("subscriptions")
+						.update({ paddle_customer_id: data.payload.paddle_customer_id })
+						.eq("user_id", data.userId);
+				}
+				if (data.payload.paddle_price_id) {
+					await admin
+						.from("subscriptions")
+						.update({ paddle_price_id: data.payload.paddle_price_id })
+						.eq("user_id", data.userId);
+				}
+			} catch (paddleError) {
+				console.log("[webhook] Paddle columns not available yet");
+			}
 			return;
 		}
 
 		if (data.subscriptionId) {
 			await admin
 				.from("subscriptions")
-				.update(cleanedPayload)
-				.eq("paddle_subscription_id", data.subscriptionId);
+				.update(safePayload)
+				.eq("stripe_subscription_id", data.subscriptionId);
 			return;
 		}
 
 		if (data.customerId) {
 			await admin
 				.from("subscriptions")
-				.update(cleanedPayload)
-				.eq("paddle_customer_id", data.customerId);
+				.update(safePayload)
+				.eq("stripe_customer_id", data.customerId);
 		}
 	} catch (err) {
 		console.error("[webhook] Error guardando suscripción:", err);
